@@ -1,0 +1,54 @@
+{% doc %}
+  BASICKWEAR Horizon header row. Drawer icon first, logo center, search/actions right.
+  @param {string} row
+  @param {string} order
+  @param {object} settings
+  @param {string} [first]
+  @param {string} [logo]
+  @param {string} [menu]
+  @param {string} [actions]
+  @param {string} [localization]
+  @param {string} [search]
+  @param {string} [drawer_search]
+{% enddoc %}
+{% liquid
+  assign left = ''
+  assign center = ''
+  assign right = ''
+  if row == 'top'
+    assign left = 'first'
+    assign center = 'logo'
+    assign right = 'search actions'
+  else
+    assign row_order = order | split: ','
+    for item in row_order
+      assign row_key = item | append: '_row'
+      if settings[row_key] == 'bottom' and item != 'search' and item != 'logo' and item != 'actions' and item != 'drawer_search'
+        assign right = right | append: item | append: ' '
+      endif
+    endfor
+  endif
+  assign columns = 'left,center,right' | split: ','
+%}
+{% for column in columns %}
+  {% case column %}
+    {% when 'left' %}{% assign items = left %}
+    {% when 'center' %}{% assign items = center %}
+    {% when 'right' %}{% assign items = right %}
+  {% endcase %}
+  {% assign items_array = items | split: ' ' %}
+  {% if items != blank %}
+    <div class="header__column header__column--{{ column }}" data-testid="header-{{ row }}-{{ column }}">
+      {% for key in items_array %}
+        {% case key %}
+          {% when 'first' %}{{ first }}
+          {% when 'logo' %}{{ logo }}
+          {% when 'menu' %}{{ menu }}
+          {% when 'localization' %}{{ localization }}
+          {% when 'search' %}{{ search }}
+          {% when 'actions' %}{{ actions }}
+        {% endcase %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endfor %}

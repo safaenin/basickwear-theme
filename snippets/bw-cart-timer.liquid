@@ -1,0 +1,304 @@
+
+{% comment %}
+  BASICKWEAR CART COUNTDOWN TIMER
+  Shopify Horizon
+  Duration: 5 Minutes
+
+  Visual countdown only.
+  Does not reserve inventory.
+  Does not affect cart discounts.
+{% endcomment %}
+
+<style>
+  /* MAIN TIMER */
+  .bw-cart-timer {
+    width: 100%;
+    box-sizing: border-box;
+    background: #111111;
+    color: #ffffff;
+    padding: 10px 12px;
+    margin: 0 0 10px;
+    text-align: center;
+    font-family: inherit;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  /* TIMER ROW */
+  .bw-cart-timer__row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  /* TIMER HEADING */
+  .bw-cart-timer__title {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    line-height: 1.4;
+  }
+
+  /* COUNTDOWN NUMBERS */
+  .bw-cart-timer__clock {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .5px;
+  }
+
+  /* ANIMATED BOTTOM LINE */
+  .bw-cart-timer__progress {
+    width: 100%;
+    height: 2px;
+    background: rgba(255,255,255,.2);
+    margin-top: 7px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .bw-cart-timer__fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #34d399;
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform 1s linear;
+  }
+
+  /* LOW TIME WARNING */
+  .bw-cart-timer.is-warning .bw-cart-timer__clock {
+    color: #fbbf24;
+  }
+
+  .bw-cart-timer.is-warning .bw-cart-timer__fill {
+    background: #fbbf24;
+  }
+
+  /* EXPIRED */
+  .bw-cart-timer.is-expired .bw-cart-timer__clock {
+    color: #fca5a5;
+  }
+
+  .bw-cart-timer.is-expired .bw-cart-timer__fill {
+    background: #fca5a5;
+  }
+
+  /* DESKTOP */
+  @media screen and (min-width: 750px) {
+    .bw-cart-timer {
+      padding: 11px 14px;
+    }
+
+    .bw-cart-timer__title {
+      font-size: 13px;
+    }
+
+    .bw-cart-timer__clock {
+      font-size: 16px;
+    }
+  }
+
+  /* MOBILE */
+  @media screen and (max-width: 749px) {
+    .bw-cart-timer {
+      padding: 9px 10px;
+      margin-bottom: 8px;
+    }
+
+    .bw-cart-timer__title {
+      font-size: 11px;
+    }
+
+    .bw-cart-timer__clock {
+      font-size: 14px;
+    }
+
+    .bw-cart-timer__progress {
+      margin-top: 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bw-cart-timer__fill {
+      transition: none;
+    }
+  }
+</style>
+
+<div
+  class="bw-cart-timer"
+  data-bw-cart-timer
+  role="timer"
+  aria-label="Checkout countdown"
+>
+  <div class="bw-cart-timer__row">
+
+    <span class="bw-cart-timer__title"
+          data-bw-timer-title>
+      Complete your checkout:
+    </span>
+
+    <span class="bw-cart-timer__clock"
+          data-bw-timer-clock>
+      05:00
+    </span>
+
+  </div>
+
+  <div class="bw-cart-timer__progress">
+    <span
+      class="bw-cart-timer__fill"
+      data-bw-timer-fill>
+    </span>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* Prevent duplicate timer scripts */
+  if (window.BWCartTimer) {
+    window.BWCartTimer.update();
+    return;
+  }
+
+  const DURATION = 5 * 60 * 1000;
+
+  let deadline = null;
+
+  function getTimers() {
+    return document.querySelectorAll(
+      '[data-bw-cart-timer]'
+    );
+  }
+
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return String(minutes).padStart(2, '0')
+      + ':'
+      + String(secs).padStart(2, '0');
+  }
+
+  function update() {
+    const timers = getTimers();
+
+    if (!timers.length) return;
+
+    /* Start on first visible cart timer */
+    if (deadline === null) {
+      const visible = Array.from(timers).some(
+        function(timer) {
+          return timer.getClientRects().length > 0;
+        }
+      );
+
+      if (!visible) return;
+
+      deadline = Date.now() + DURATION;
+    }
+
+    const remaining = Math.max(
+      0,
+      Math.ceil((deadline - Date.now()) / 1000)
+    );
+
+    const progress = Math.max(
+      0,
+      Math.min(1, (deadline - Date.now()) / DURATION)
+    );
+
+    timers.forEach(function(timer) {
+      const clock = timer.querySelector(
+        '[data-bw-timer-clock]'
+      );
+
+      const title = timer.querySelector(
+        '[data-bw-timer-title]'
+      );
+
+      const fill = timer.querySelector(
+        '[data-bw-timer-fill]'
+      );
+
+      if (clock) {
+        clock.textContent = formatTime(remaining);
+      }
+
+      if (fill) {
+        fill.style.transform = 'scaleX('
+          + progress + ')';
+      }
+
+      timer.classList.toggle(
+        'is-warning',
+        remaining > 0 && remaining <= 60
+      );
+
+      timer.classList.toggle(
+        'is-expired',
+        remaining === 0
+      );
+
+      if (remaining === 0) {
+        if (title) {
+          title.textContent =
+            'Checkout timer ended:';
+        }
+      } else {
+        if (title) {
+          title.textContent =
+            'Complete your checkout:';
+        }
+      }
+    });
+  }
+
+  window.BWCartTimer = {
+    update: update
+  };
+
+  /* Update countdown every second */
+  setInterval(update, 1000);
+
+  /* Support cart drawer DOM changes */
+  const observer = new MutationObserver(function() {
+    update();
+  });
+
+  function initialize() {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    update();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      initialize,
+      { once: true }
+    );
+  } else {
+    initialize();
+  }
+
+  /* Update when tab becomes visible */
+  document.addEventListener(
+    'visibilitychange',
+    update
+  );
+
+})();
+</script>

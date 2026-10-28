@@ -1,0 +1,2003 @@
+{% doc %}
+  Renders reusable cart drawer markup for both initial page loads and Section Rendering API responses.
+
+  @param {boolean} [render_wrapper] - When true, wraps the drawer in the section wrapper that the Section Rendering API adds automatically.
+{% enddoc %}
+
+{%- liquid
+  assign render_wrapper = render_wrapper | default: true, allow_false: true
+-%}
+
+{%- if settings.cart_type == 'drawer' and template.name != 'cart' -%}
+
+  {% if render_wrapper %}
+    <div
+      id="shopify-section-cart-drawer-section"
+      class="shopify-section"
+    >
+  {% endif %}
+
+  <script
+    type="module"
+    src="{{ 'cart-drawer.js' | asset_url }}"
+    fetchpriority="low"
+  ></script>
+
+
+  {% capture empty_cart_drawer_content %}
+
+    <div
+      class="cart-drawer__content"
+      aria-label="{{ 'accessibility.cart' | t }}"
+    >
+
+      <h2
+        class="theme-drawer__title h4"
+        id="cart-drawer-heading"
+      >
+        {{ 'content.your_cart_is_empty' | t }}
+      </h2>
+
+      <div class="cart-drawer__items">
+        {% render 'cart-products', force_empty: true, context: 'drawer' %}
+      </div>
+
+    </div>
+
+  {% endcapture %}
+
+
+  <theme-drawer
+    id="cart-drawer"
+    data-skip-node-update
+  >
+
+    <dialog
+      ref="panel"
+      class="theme-drawer__dialog color-custom-drawer"
+      aria-labelledby="cart-drawer-heading"
+      cart-summary-sticky="true"
+    >
+
+      <cart-drawer-component
+        {% if settings.auto_open_cart_drawer and template.name != 'cart' %}
+          auto-open
+        {% endif %}
+      >
+
+        <template id="empty-cart-template">
+          {{ empty_cart_drawer_content }}
+        </template>
+
+
+        <div
+          class="cart-drawer__inner{% if cart.empty? %} cart-drawer--empty{% endif %}"
+          data-hydration-key="cart-drawer-inner"
+        >
+
+
+          {%- if cart.empty? -%}
+
+            <div class="theme-drawer__header">
+
+              <button
+                on:click="#cart-drawer/close"
+                class="theme-drawer__close-button cart-drawer__close-button--empty"
+                type="button"
+                aria-label="{{ 'actions.close' | t }}"
+              >
+
+                <span class="svg-wrapper">
+                  {{- 'icon-close.svg' | inline_asset_content -}}
+                </span>
+
+              </button>
+
+            </div>
+
+
+          {%- else -%}
+
+
+            {% capture cart_badge_html %}
+
+              <span
+                class="theme-drawer__badge{% if cart.item_count == 0 %} visually-hidden{% endif %}"
+                aria-hidden="true"
+                {% if cart.item_count <= 99 %}
+                  data-maintain-ratio
+                {% endif %}
+              >
+                {{- cart.item_count -}}
+              </span>
+
+
+              {% if cart.item_count > 0 %}
+
+                <span class="visually-hidden">
+                  {{ 'accessibility.cart_count' | t }}: {{ cart.item_count }}
+                </span>
+
+              {% endif %}
+
+            {% endcapture %}
+
+
+            {% assign cart_drawer_title = 'content.cart_title' | t %}
+
+
+            {% render 'theme-drawer-header',
+              title: cart_drawer_title,
+              drawer_id: 'cart-drawer',
+              heading_id: 'cart-drawer-heading',
+              title_append: cart_badge_html
+            %}
+
+
+          {%- endif -%}
+
+
+
+          {% capture cart_items_children %}
+
+
+            {%- if cart.empty? -%}
+
+
+              {{ empty_cart_drawer_content }}
+
+
+            {%- else -%}
+
+
+              {% comment %}
+                ========================================
+                BASICKWEAR DISCOUNT PROGRESS BAR
+
+                ₹2,000 = 10% OFF
+                ₹4,000 = 15% OFF
+                ₹5,000 = 20% OFF
+                ========================================
+              {% endcomment %}
+
+
+              {%- liquid
+                assign bw_cart_total = cart.items_subtotal_price
+                assign bw_tier_1 = 200000
+                assign bw_tier_2 = 400000
+                assign bw_tier_3 = 500000
+              -%}
+
+
+
+{% comment %}
+  ============================================
+  BASICKWEAR - REAL SAVINGS BAR
+  Shopify Horizon Cart Drawer
+
+  - Actual Shopify applied discounts only
+  - No fake or fixed savings amount
+  - Hidden when savings are zero
+  - Automatically updates with cart re-render
+  ============================================
+{% endcomment %}
+
+
+              <div class="bw-discount-progress">
+
+
+                <div class="bw-discount-message">
+
+
+                  {% if bw_cart_total < bw_tier_1 %}
+
+
+                    Add
+
+                    <strong>
+                      {{ bw_tier_1 | minus: bw_cart_total | money }}
+                    </strong>
+
+                    more to unlock
+
+                    <strong>10% OFF</strong>
+
+
+                  {% elsif bw_cart_total < bw_tier_2 %}
+
+
+                    <span class="bw-unlocked-message">
+                      ✓ 10% OFF UNLOCKED
+                    </span>
+
+                    <br>
+
+                    Add
+
+                    <strong>
+                      {{ bw_tier_2 | minus: bw_cart_total | money }}
+                    </strong>
+
+                    more to unlock
+
+                    <strong>15% OFF</strong>
+
+
+                  {% elsif bw_cart_total < bw_tier_3 %}
+
+
+                    <span class="bw-unlocked-message">
+                      ✓ 15% OFF UNLOCKED
+                    </span>
+
+                    <br>
+
+                    Add
+
+                    <strong>
+                      {{ bw_tier_3 | minus: bw_cart_total | money }}
+                    </strong>
+
+                    more to unlock
+
+                    <strong>20% OFF</strong>
+
+
+                  {% else %}
+
+
+                    <span class="bw-unlocked-message bw-final-unlocked">
+                      🎉 20% OFF UNLOCKED!
+                    </span>
+
+
+                  {% endif %}
+
+
+                </div>
+
+
+
+                <div class="bw-progress-track">
+
+
+                  <div
+                    class="bw-progress-fill"
+                    style="
+                      width:
+                      {% if bw_cart_total >= bw_tier_3 %}
+                        100%
+                      {% else %}
+                        {{ bw_cart_total | times: 100.0 | divided_by: bw_tier_3 }}%
+                      {% endif %}
+                    "
+                  ></div>
+
+
+
+                  <div
+                    class="bw-progress-point bw-point-1{% if bw_cart_total >= bw_tier_1 %} bw-unlocked{% endif %}"
+                  >
+
+                    <span class="bw-point-circle">
+                      %
+                    </span>
+
+                  </div>
+
+
+
+                  <div
+                    class="bw-progress-point bw-point-2{% if bw_cart_total >= bw_tier_2 %} bw-unlocked{% endif %}"
+                  >
+
+                    <span class="bw-point-circle">
+                      %
+                    </span>
+
+                  </div>
+
+
+
+                  <div
+                    class="bw-progress-point bw-point-3{% if bw_cart_total >= bw_tier_3 %} bw-unlocked{% endif %}"
+                  >
+
+                    <span class="bw-point-circle">
+                      %
+                    </span>
+
+                  </div>
+
+
+                </div>
+
+
+
+                <div class="bw-progress-labels">
+
+
+                  <div class="bw-label bw-label-1">
+
+                    <strong>₹2,000</strong>
+
+                    <span>10% OFF</span>
+
+                  </div>
+
+
+                  <div class="bw-label bw-label-2">
+
+                    <strong>₹4,000</strong>
+
+                    <span>15% OFF</span>
+
+                  </div>
+
+
+                  <div class="bw-label bw-label-3">
+
+                    <strong>₹5,000</strong>
+
+                    <span>20% OFF</span>
+
+                  </div>
+
+
+                </div>
+
+
+              </div>
+
+
+
+              <scroll-hint
+                class="cart-drawer__content"
+                aria-label="{{ 'accessibility.cart' | t }}"
+              >
+
+
+                <!-- CART PRODUCTS -->
+
+                <div class="cart-drawer__items">
+
+                  {% render 'cart-products', context: 'drawer' %}
+
+                </div>
+
+
+
+                <!-- AUTOMATIC RELATED PRODUCTS -->
+
+                {%- if cart.items.size > 0 -%}
+
+                  <div
+                    id="bw-cart-recommendations"
+                    class="bw-cart-recommendations-loader"
+                    data-product-id="{{ cart.items.first.product.id }}"
+                  ></div>
+
+                {%- endif -%}
+
+
+
+              </scroll-hint>
+
+                <!-- CART SUMMARY -->
+
+                <div class="cart-drawer__summary">
+
+{% comment %}
+  BASICKWEAR CHECKOUT SAVINGS BAR
+  Actual applied Shopify discounts only
+{% endcomment %}
+
+{%- assign bw_checkout_savings = cart.total_discount -%}
+
+{% if cart.item_count > 0 and bw_checkout_savings > 0 %}
+  <div class="bw-real-savings-bar">
+    <span class="bw-real-savings-bar__text">
+      {{ bw_checkout_savings | money }} Saved so far!
+    </span>
+  </div>
+{% endif %}
+
+                  {% render 'cart-summary',
+                    section_id: 'cart-drawer-section'
+                  %}
+
+                </div>
+
+
+
+
+
+            {%- endif -%}
+
+
+          {% endcapture %}
+
+
+
+          {% render 'cart-items-component',
+            children: cart_items_children,
+            is_drawer: true,
+            section_id: 'cart-drawer-section'
+          %}
+
+
+        </div>
+
+
+      </cart-drawer-component>
+
+
+    </dialog>
+
+
+  </theme-drawer>
+
+
+  {% if render_wrapper %}
+    </div>
+  {% endif %}
+
+
+{%- endif -%}
+
+
+
+<script>
+/* BASICKWEAR - Horizon Cart Drawer Recommendations */
+(function () {
+  'use strict';
+  if (window.BWCartRecommendationsInstalled) return;
+  window.BWCartRecommendationsInstalled = true;
+
+  const HOLDER = '#cart-drawer #bw-cart-recommendations';
+  const CARD = '.bw-cart-recommendations';
+  const SECTION_ID = 'basickwear-cart-recommendations';
+  const cache = new Map();
+  const pending = new Set();
+  let scheduled = false;
+  let adding = false;
+
+  function root() {
+    return window.Shopify?.routes?.root || '/';
+  }
+
+  function holder() {
+    return document.querySelector(HOLDER);
+  }
+
+  function hasCards(element) {
+    return !!element && !!element.querySelector(CARD);
+  }
+
+  function remember(element) {
+    if (!hasCards(element)) return;
+    const productId = element.dataset.productId;
+    if (productId) cache.set(productId, element.innerHTML);
+  }
+
+  async function loadRecommendations() {
+    const element = holder();
+    if (!element) return;
+    const productId = element.dataset.productId;
+    if (!productId) return;
+
+    if (hasCards(element)) {
+      remember(element);
+      return;
+    }
+
+    if (cache.has(productId)) {
+      element.innerHTML = cache.get(productId);
+      element.dataset.loaded = 'true';
+      return;
+    }
+
+    if (pending.has(productId)) return;
+    pending.add(productId);
+    element.dataset.loading = 'true';
+
+    try {
+      const url = root() + 'recommendations/products' +
+        '?section_id=' + encodeURIComponent(SECTION_ID) +
+        '&product_id=' + encodeURIComponent(productId) +
+        '&limit=6&intent=related';
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Recommendations HTTP ' + response.status);
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const section = doc.querySelector('#shopify-section-' + SECTION_ID);
+      const result = section || doc;
+      if (!hasCards(result)) return;
+
+      const content = section ? section.innerHTML : result.querySelector(CARD)?.outerHTML;
+      if (!content) return;
+      cache.set(productId, content);
+
+      const current = holder();
+      if (current && current.dataset.productId === productId && !hasCards(current)) {
+        current.innerHTML = content;
+        current.dataset.loaded = 'true';
+      }
+    } catch (error) {
+      console.warn('[BASICKWEAR recommendations]', error);
+    } finally {
+      pending.delete(productId);
+      const current = holder();
+      if (current && current.dataset.productId === productId) {
+        current.dataset.loading = 'false';
+      }
+    }
+  }
+
+  function scheduleLoad() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function () {
+      scheduled = false;
+      loadRecommendations();
+    });
+  }
+
+  async function refreshDrawer() {
+    const before = holder();
+    remember(before);
+    const scrollArea = document.querySelector('#cart-drawer .cart-drawer__content');
+    const oldScrollTop = scrollArea ? scrollArea.scrollTop : 0;
+
+    const response = await fetch(root() + '?sections=cart-drawer-section', {
+      headers: { Accept: 'application/json' }
+    });
+    if (!response.ok) throw new Error('Drawer refresh HTTP ' + response.status);
+    const sections = await response.json();
+    const html = sections['cart-drawer-section'];
+    if (!html) throw new Error('Missing cart-drawer-section');
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const next = doc.querySelector('#cart-drawer .cart-drawer__inner');
+    const current = document.querySelector('#cart-drawer .cart-drawer__inner');
+    if (!next || !current) throw new Error('Cart drawer inner not found');
+    current.replaceWith(next.cloneNode(true));
+
+    const newScrollArea = document.querySelector('#cart-drawer .cart-drawer__content');
+    if (newScrollArea) newScrollArea.scrollTop = oldScrollTop;
+    scheduleLoad();
+  }
+
+  document.addEventListener('click', async function (event) {
+    const target = event.target instanceof Element ? event.target : null;
+    const button = target?.closest('#cart-drawer .bw-rec-add');
+    if (!button) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (adding || button.disabled) return;
+
+    const variantId = Number(button.dataset.variantId);
+    if (!Number.isSafeInteger(variantId) || variantId <= 0) return;
+
+    adding = true;
+    remember(holder());
+    const oldHTML = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<span class="bw-rec-add-text">Adding...</span>';
+    try {
+      const response = await fetch(root() + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.description || 'Unable to add product');
+      }
+      await refreshDrawer();
+    } catch (error) {
+      console.warn('[BASICKWEAR recommendation add]', error);
+      if (button.isConnected) {
+        button.disabled = false;
+        button.innerHTML = oldHTML;
+      }
+    } finally {
+      adding = false;
+    }
+  });
+
+  const observer = new MutationObserver(function (mutations) {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (!(node instanceof Element)) continue;
+        if (node.matches?.(HOLDER) || node.querySelector?.(HOLDER)) {
+          scheduleLoad();
+          return;
+        }
+      }
+    }
+  });
+
+  function init() {
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    scheduleLoad();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
+
+<!-- BASICKWEAR: play celebration only when an existing discount tier is crossed -->
+
+<!-- BASICKWEAR - DISCOUNT CONFETTI CELEBRATION -->
+
+<style>
+  #bw-celebration-confetti {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  #bw-celebration-confetti .bw-confetti-piece {
+    position: absolute;
+    top: -20px;
+    left: var(--left);
+    width: var(--width);
+    height: var(--height);
+    background: var(--color);
+    border-radius: 2px;
+    opacity: 0;
+    animation: bw-confetti-drop var(--duration)
+      var(--delay) linear forwards;
+  }
+
+  @keyframes bw-confetti-drop {
+    0% {
+      opacity: 1;
+      transform: translate3d(0, -20px, 0)
+        rotate(0deg);
+    }
+
+    85% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate3d(
+        var(--drift), 110vh, 0
+      ) rotate(var(--rotation));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #bw-celebration-confetti {
+      display: none;
+    }
+  }
+</style>
+
+
+<script>
+/* BASICKWEAR - AUTOMATIC DISCOUNT CONFETTI */
+(function () {
+  'use strict';
+
+  if (window.BWRewardUnlockInstalled) return;
+  window.BWRewardUnlockInstalled = true;
+
+  let previousTier = null;
+  let scheduled = false;
+  let cleanupTimer = null;
+
+  const colors = [
+    '#ff477e',
+    '#ffd166',
+    '#06d6a0',
+    '#118ab2',
+    '#a855f7',
+    '#ff9f1c',
+    '#67e8f9'
+  ];
+
+  function progressElement() {
+    return document.querySelector(
+      '#cart-drawer .bw-discount-progress'
+    );
+  }
+
+  function currentTier() {
+    const progress = progressElement();
+    if (!progress) return null;
+
+    return progress.querySelectorAll(
+      '.bw-progress-point.bw-unlocked'
+    ).length;
+  }
+
+  function celebrate() {
+    if (window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches) return;
+
+    const dialog = document.querySelector(
+      '#cart-drawer dialog[open]'
+    );
+
+    if (!dialog) return;
+
+    document.getElementById(
+      'bw-celebration-layer'
+    )?.remove();
+
+    clearTimeout(cleanupTimer);
+
+    const layer = document.createElement('div');
+    layer.id = 'bw-celebration-layer';
+
+    
+layer.style.cssText = `
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  pointer-events:none;
+  overflow:hidden;
+  border-radius:inherit;
+`;
+
+    dialog.appendChild(layer);
+
+    for (let i = 0; i < 120; i++) {
+      const piece = document.createElement('span');
+
+      piece.style.cssText = `
+        position:absolute;
+        top:0;
+        left:${Math.random() * 95}%;
+        width:7px;
+        height:12px;
+        background:${colors[i % colors.length]};
+        border-radius:2px;
+      `;
+
+      layer.appendChild(piece);
+
+      piece.animate([
+        {
+          transform:
+            'translateY(0px) rotate(0deg)',
+          opacity: 1
+        },
+        {
+          transform:
+            `translate(${Math.random() * 160 - 80}px, 600px) rotate(720deg)`,
+          opacity: 0
+        }
+      ], {
+        duration: 2500 + Math.random() * 1000,
+        delay: Math.random() * 300,
+        fill: 'forwards'
+      });
+    }
+
+    cleanupTimer = setTimeout(function () {
+      layer.remove();
+    }, 4500);
+  }
+
+  function checkDiscount() {
+    const tier = currentTier();
+
+    if (tier === null) return;
+
+    if (previousTier === null) {
+      previousTier = tier;
+      return;
+    }
+
+    if (tier > previousTier) {
+      const progress = progressElement();
+
+      for (
+        let level = previousTier + 1;
+        level <= tier;
+        level++
+      ) {
+        const marker = progress?.querySelector(
+          '.bw-point-' + level
+        );
+
+        if (marker) {
+          marker.classList.remove(
+            'bw-just-unlocked'
+          );
+
+          void marker.offsetWidth;
+
+          marker.classList.add(
+            'bw-just-unlocked'
+          );
+        }
+      }
+
+      const message = progress?.querySelector(
+        '.bw-discount-message'
+      );
+
+      if (message) {
+        message.classList.remove(
+          'bw-just-celebrated'
+        );
+
+        void message.offsetWidth;
+
+        message.classList.add(
+          'bw-just-celebrated'
+        );
+      }
+
+      celebrate();
+    }
+
+    previousTier = tier;
+  }
+
+  function scheduleCheck() {
+    if (scheduled) return;
+
+    scheduled = true;
+
+    requestAnimationFrame(function () {
+      scheduled = false;
+      checkDiscount();
+    });
+  }
+
+  function init() {
+    checkDiscount();
+
+    const observer = new MutationObserver(
+      function (mutations) {
+        const relevant = mutations.some(
+          function (mutation) {
+            if (
+              mutation.type === 'attributes' &&
+              mutation.target.matches?.(
+                '.bw-progress-point'
+              )
+            ) return true;
+
+            return [
+              ...mutation.addedNodes,
+              ...mutation.removedNodes
+            ].some(function (node) {
+              if (!(node instanceof Element))
+                return false;
+
+              return node.matches(
+                '#cart-drawer, .cart-drawer__inner, .bw-discount-progress, .bw-progress-point'
+              ) || !!node.querySelector(
+                '.bw-discount-progress, .bw-progress-point'
+              );
+            });
+          }
+        );
+
+        if (relevant) scheduleCheck();
+      }
+    );
+
+    observer.observe(
+      document.documentElement,
+      {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class']
+      }
+    );
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      init,
+      { once: true }
+    );
+  } else {
+    init();
+  }
+})();
+</script>
+
+
+{% stylesheet %}
+
+/* =========================================
+   CART DRAWER
+========================================= */
+
+cart-drawer-component {
+  --cart-drawer-padding:
+    var(--theme-drawer-padding);
+
+  --font-paragraph--line-height: 1;
+
+  display: contents;
+}
+
+
+.cart-drawer__inner {
+  display: flex;
+
+  flex-direction: column;
+
+  height: 100%;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+
+.cart-drawer__inner
+> .cart-items-component {
+
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  height: auto;
+
+  overflow: hidden;
+}
+
+
+
+/* =========================================
+   MAIN SCROLL AREA
+========================================= */
+
+.cart-drawer__content {
+  display: flex;
+
+  flex-direction: column;
+
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  padding: 0;
+
+  background-color:
+    var(--color-background);
+
+  overflow-x: hidden;
+
+  overflow-y: auto;
+
+  -webkit-overflow-scrolling:
+    touch;
+}
+
+
+
+/* =========================================
+   CART PRODUCTS
+========================================= */
+
+.cart-drawer__items {
+  display: flex;
+
+  flex-direction: column;
+
+  flex: 0 0 auto;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding-inline:
+    var(--cart-drawer-padding);
+
+  overflow: visible !important;
+}
+
+
+.cart-drawer__items
+.cart-items__table-row {
+
+  position: relative;
+
+  height: auto !important;
+
+  min-height: 0 !important;
+
+  max-height: none !important;
+
+  overflow: visible !important;
+
+  padding-bottom:
+    var(--gap-xl);
+
+  border-bottom:
+    var(--style-border-width)
+    solid
+    rgb(
+      var(--color-foreground-rgb) /
+      var(--opacity-10-25)
+    );
+
+  margin-bottom:
+    var(--gap-xl);
+}
+
+
+.cart-drawer__items
+.cart-items__table-row:first-child {
+
+  padding-top:
+    14px !important;
+}
+
+
+.cart-drawer__items
+.cart-items__table-row:has(
+  + .cart-items__nested-line
+) {
+
+  border-bottom: none;
+
+  margin-bottom: 0;
+}
+
+
+.cart-drawer__items
+.cart-items__table-row:last-child {
+
+  border-bottom: none;
+
+  padding-block-end: 0;
+
+  margin-block-end: 0;
+}
+
+
+
+/* =========================================
+   PRODUCT IMAGE FIX
+========================================= */
+
+.cart-drawer__items
+.cart-items__media,
+
+.cart-drawer__items
+.cart-items__image,
+
+.cart-drawer__items
+.cart-item__image,
+
+.cart-drawer__items
+.cart-item__media,
+
+.cart-drawer__items
+.cart-items__media-container,
+
+.cart-drawer__items
+.cart-item__image-container {
+
+  overflow: visible !important;
+
+  max-height: none !important;
+}
+
+
+.cart-drawer__items img {
+
+  display: block !important;
+
+  object-fit: contain !important;
+
+  object-position:
+    center center !important;
+}
+
+
+.cart-drawer__items picture {
+
+  overflow: visible !important;
+}
+
+
+.cart-drawer__items picture img {
+
+  object-fit: contain !important;
+
+  object-position:
+    center center !important;
+}
+
+
+
+/* =========================================
+   RECOMMENDATIONS HOLDER
+========================================= */
+
+.bw-cart-recommendations-loader {
+
+  display: block;
+
+  flex: 0 0 auto;
+
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+
+
+/* =========================================
+   CART CLOSE BUTTON
+========================================= */
+
+.cart-drawer__close-button--empty {
+
+  margin-inline-start: auto;
+}
+
+
+
+/* =========================================
+   CART SUMMARY
+========================================= */
+
+.cart-drawer__summary {
+
+  --cart-drawer-summary-padding:
+    var(--padding-lg);
+
+  position: sticky;
+
+  bottom: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  flex-shrink: 0;
+
+  gap:
+    var(--gap-xl);
+
+  padding:
+    var(--cart-drawer-summary-padding);
+
+  margin-top: auto;
+
+  background-color:
+    var(--color-background);
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      black
+      var(--cart-drawer-summary-padding)
+    );
+}
+
+
+@media screen and (min-width: 750px) {
+
+  .cart-drawer__summary {
+
+    --cart-drawer-summary-padding:
+      var(--padding-2xl);
+
+  }
+
+}
+
+
+.theme-drawer__dialog[
+  cart-summary-sticky='false'
+]
+.cart-drawer__summary {
+
+  position: static;
+
+  mask-image: none;
+}
+
+
+.theme-drawer__dialog[
+  cart-summary-sticky='false'
+]
+.cart-drawer__items {
+
+  overflow: visible;
+}
+
+
+.cart-actions summary {
+
+  padding-inline: 0;
+
+  padding-block:
+    var(--padding-sm);
+
+  line-height: 1.2;
+
+  min-height:
+    var(--minimum-touch-target);
+}
+
+
+.cart-drawer__summary
+.cart__summary-totals:not(
+  :has(
+    .cart__subtotal-container:empty
+  )
+) {
+
+  border-block-start:
+    var(--style-border-width)
+    solid
+    rgb(
+      var(--color-foreground-rgb) /
+      var(--opacity-10-25)
+    );
+
+  padding-block-start:
+    var(--padding-2xl);
+}
+
+
+@media screen and (min-width: 750px) {
+
+  .cart-drawer__summary
+  .cart-note {
+
+    margin-block-start:
+      var(--margin-3xs);
+  }
+
+}
+
+
+
+/* =========================================
+   EMPTY CART
+========================================= */
+
+.cart-drawer--empty
+.cart-drawer__content {
+
+  text-align: center;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: auto;
+}
+
+
+.cart-drawer--empty
+.cart-drawer__items {
+
+  padding-inline: 0;
+}
+
+
+cart-drawer-component:not(
+  :has(.cart-form)
+)
+.cart-drawer__content {
+
+  text-align: center;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+
+cart-drawer-component:not(
+  :has(.cart-form)
+)
+.cart-drawer__items {
+
+  padding-inline: 0;
+}
+
+
+
+/* =========================================
+   BASICKWEAR DISCOUNT PROGRESS BAR
+========================================= */
+
+.bw-discount-progress {
+
+  position: relative;
+
+  z-index: 10;
+
+  flex: 0 0 auto;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding:
+    14px 22px 17px;
+
+  background: #ffffff;
+
+  border-bottom:
+    1px solid #e7e7e7;
+
+  overflow: visible;
+}
+
+
+/* MESSAGE */
+
+.bw-discount-message {
+
+  min-height: 38px;
+
+  margin-bottom: 18px;
+
+  color: #111111;
+
+  font-size: 13px;
+
+  line-height: 1.45;
+
+  text-align: center;
+}
+
+
+.bw-discount-message strong {
+
+  font-weight: 700;
+}
+
+
+.bw-unlocked-message {
+
+  font-weight: 700;
+}
+
+
+.bw-final-unlocked {
+
+  font-size: 14px;
+}
+
+
+
+/* =========================================
+   PROGRESS TRACK
+========================================= */
+
+.bw-progress-track {
+
+  position: relative;
+
+  height: 5px;
+
+  margin:
+    0 12px;
+
+  background: #dedede;
+
+  border-radius: 20px;
+}
+
+
+.bw-progress-fill {
+
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  height: 100%;
+
+  max-width: 100%;
+
+  background: #111111;
+
+  border-radius: 20px;
+
+  transition:
+    width 0.35s ease;
+}
+
+
+
+/* =========================================
+   PROGRESS POINTS
+========================================= */
+
+.bw-progress-point {
+
+  position: absolute;
+
+  top: 50%;
+
+  z-index: 2;
+
+  transform:
+    translate(-50%, -50%);
+}
+
+
+.bw-point-1 {
+  left: 40%;
+}
+
+
+.bw-point-2 {
+  left: 80%;
+}
+
+
+.bw-point-3 {
+  left: 100%;
+}
+
+
+.bw-point-circle {
+
+  display: flex;
+
+  width: 25px;
+
+  height: 25px;
+
+  align-items: center;
+
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border:
+    2px solid #c8c8c8;
+
+  background: #ffffff;
+
+  color: #999999;
+
+  border-radius: 50%;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  transition:
+    all 0.25s ease;
+}
+
+
+.bw-unlocked
+.bw-point-circle {
+
+  border-color: #111111;
+
+  background: #111111;
+
+  color: #ffffff;
+}
+
+
+
+/* =========================================
+   PROGRESS LABELS
+========================================= */
+
+.bw-progress-labels {
+
+  position: relative;
+
+  height: 35px;
+
+  margin:
+    15px 12px 0;
+
+  color: #111111;
+
+  font-size: 11px;
+}
+
+
+.bw-label {
+
+  position: absolute;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  text-align: center;
+
+  transform:
+    translateX(-50%);
+
+  white-space: nowrap;
+}
+
+
+.bw-label-1 {
+  left: 40%;
+}
+
+
+.bw-label-2 {
+  left: 80%;
+}
+
+
+.bw-label-3 {
+
+  right: 0;
+
+  transform: none;
+
+  text-align: right;
+}
+
+
+.bw-label strong {
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+
+.bw-label span {
+
+  font-size: 10px;
+}
+
+
+
+/* =========================================
+   DISCOUNT BAR + PRODUCTS
+========================================= */
+
+.bw-discount-progress
++ .cart-drawer__content {
+
+  position: relative;
+
+  z-index: 1;
+
+  min-height: 0;
+}
+
+
+.bw-discount-progress
++ scroll-hint.cart-drawer__content {
+
+  position: relative;
+
+  z-index: 1;
+
+  min-height: 0;
+}
+
+
+.bw-discount-progress
++ scroll-hint.cart-drawer__content
+> .cart-drawer__items {
+
+  flex-shrink: 0;
+
+  overflow: visible !important;
+}
+
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media screen and (max-width: 749px) {
+
+  .bw-discount-progress {
+
+    padding:
+      13px 18px 15px;
+  }
+
+
+  .bw-discount-message {
+
+    font-size: 12px;
+
+    margin-bottom: 18px;
+  }
+
+
+  .bw-label strong {
+
+    font-size: 11px;
+  }
+
+
+  .bw-label span {
+
+    font-size: 9px;
+  }
+
+
+  .cart-drawer__items
+  .cart-items__table-row:first-child {
+
+    padding-top:
+      14px !important;
+  }
+
+}
+
+
+
+/* =========================================
+   VIEW TRANSITION
+========================================= */
+
+@media screen and (
+  prefers-reduced-motion:
+  no-preference
+) {
+
+  html:active-view-transition-type(
+    empty-cart-drawer
+  ) {
+
+    .theme-drawer__close-button {
+
+      view-transition-name:
+        cart-drawer-close-button;
+    }
+
+  }
+
+}
+
+
+:active-view-transition {
+
+  .cart-drawer__header,
+  .cart-drawer__content {
+
+    background: transparent;
+  }
+
+}
+
+
+/* ===================================================
+   BASICKWEAR - REWARD UNLOCK CELEBRATION ONLY
+   Existing layout, sizes and discount tiers unchanged
+   =================================================== */
+#cart-drawer .bw-progress-point.bw-just-unlocked .bw-point-circle {
+  animation: bw-reward-bounce 850ms cubic-bezier(.2,.8,.2,1) both;
+}
+#cart-drawer .bw-discount-message.bw-just-celebrated {
+  animation: bw-reward-message 650ms ease-out both;
+}
+@keyframes bw-reward-bounce {
+  0%   { transform: scale(.65); box-shadow: 0 0 0 0 rgba(5,150,105,.5); }
+  45%  { transform: scale(1.28); box-shadow: 0 0 0 12px rgba(5,150,105,.14); }
+  75%  { transform: scale(.94); box-shadow: 0 0 0 5px rgba(5,150,105,.08); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5,150,105,0); }
+}
+@keyframes bw-reward-message {
+  0%   { opacity: .3; transform: translateY(7px) scale(.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cart-drawer .bw-progress-point.bw-just-unlocked .bw-point-circle,
+  #cart-drawer .bw-discount-message.bw-just-celebrated {
+    animation: none !important;
+  }
+}
+
+
+/* BASICKWEAR REFERENCE DESIGN OVERRIDES */
+/* BASICKWEAR | Reference-inspired cart drawer design
+   Visual-only styling. No coupon, payment, reservation, or discount logic added. */
+
+/* Overall shell */
+#cart-drawer .theme-drawer__dialog {
+  background: #f5f6f8;
+}
+#cart-drawer .cart-drawer__inner,
+#cart-drawer .cart-drawer__content {
+  background: #f5f6f8;
+}
+#cart-drawer .theme-drawer__header {
+  background: #f5f6f8;
+  padding-block: 13px;
+}
+
+/* Slim reward area: original milestones preserved */
+#cart-drawer .bw-discount-progress {
+  padding: 14px 16px 14px !important;
+  margin: 0 10px 9px !important;
+  width: calc(100% - 20px) !important;
+  background: #fff;
+  border: 1px solid #e4e6eb;
+  border-radius: 18px;
+  box-shadow: 0 2px 7px rgba(24,24,27,.025);
+}
+#cart-drawer .bw-discount-message {
+  min-height: 0 !important;
+  margin: 0 0 20px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  color: #30323a;
+}
+#cart-drawer .bw-unlocked-message {
+  font-weight: 750;
+}
+#cart-drawer .bw-progress-track {
+  height: 5px !important;
+  background: #e2e4e8;
+  margin-inline: 10px !important;
+  border-radius: 99px;
+}
+#cart-drawer .bw-progress-fill {
+  background: #059669;
+  border-radius: 99px;
+  transition: width .6s cubic-bezier(.22,1,.36,1);
+}
+#cart-drawer .bw-point-circle {
+  width: 23px !important;
+  height: 23px !important;
+  border: 2px solid #9ca3af;
+  background: #fff;
+  color: #777;
+  font-size: 10px;
+  box-shadow: 0 0 0 2px #fff;
+}
+#cart-drawer .bw-unlocked .bw-point-circle {
+  background: #059669;
+  border-color: #059669;
+  color: white;
+}
+#cart-drawer .bw-progress-labels {
+  height: 31px !important;
+  margin: 15px 10px 0 !important;
+}
+#cart-drawer .bw-label { gap: 2px !important; }
+#cart-drawer .bw-label strong { font-size: 11px !important; }
+#cart-drawer .bw-label span { font-size: 10px !important; }
+
+/* Product list and premium cards */
+#cart-drawer .cart-drawer__items {
+  padding-inline: 12px !important;
+  gap: 9px;
+  background: transparent;
+}
+#cart-drawer .cart-drawer__items .cart-items__table-row {
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #e2e4e8 !important;
+  border-radius: 16px;
+  padding: 12px !important;
+  margin: 0 0 9px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  box-shadow: 0 1px 4px rgba(16,24,40,.025);
+  overflow: visible;
+}
+#cart-drawer .cart-drawer__items .cart-items__table-row:first-child {
+  padding-top: 12px !important;
+}
+#cart-drawer .cart-drawer__items img {
+  object-fit: contain !important;
+  object-position: center;
+  max-height: 105px !important;
+  max-width: 76px !important;
+  border-radius: 8px;
+}
+#cart-drawer .cart-items__title,
+#cart-drawer .cart-item__title,
+#cart-drawer .cart-items__product-title {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  font-weight: 550;
+  margin-block: 0 3px !important;
+}
+#cart-drawer .cart-items__details,
+#cart-drawer .cart-items__product-info {
+  row-gap: 3px !important;
+}
+#cart-drawer .cart-items__price,
+#cart-drawer .cart-items__price-container,
+#cart-drawer .cart-items__price-wrapper {
+  font-size: 12px !important;
+}
+#cart-drawer .quantity-selector {
+  min-height: 36px !important;
+  height: 36px !important;
+  margin-block: 5px 0 !important;
+  border: 1px solid #e4e6eb;
+  border-radius: 9px;
+  background: #f8f9fa;
+}
+#cart-drawer .quantity-selector button,
+#cart-drawer .quantity-selector input {
+  height: 34px !important;
+  min-height: 34px !important;
+  font-size: 12px !important;
+}
+
+/* Recommendations: style their existing holder, no new products fetched */
+#cart-drawer .bw-cart-recommendations-loader:not(:empty) {
+  background: #fff;
+  border: 1px solid #e2e4e8;
+  border-radius: 16px;
+  padding: 12px;
+  margin: 8px 12px 12px;
+  width: calc(100% - 24px);
+}
+
+/* Sticky cart total/checkout region */
+#cart-drawer .cart-drawer__summary {
+  background: #fff;
+  box-shadow: 0 -6px 22px rgba(17,24,39,.05);
+  border-top: 1px solid #eceef0;
+  border-radius: 18px 18px 0 0;
+  gap: 9px !important;
+  padding: 13px 16px 16px !important;
+  mask-image: none !important;
+}
+#cart-drawer .cart-drawer__summary :is(button[type="submit"], a[href*="checkout"]) {
+  border-radius: 12px;
+}
+
+@media (max-width: 749px) {
+  #cart-drawer .bw-discount-progress {
+    margin-inline: 8px !important;
+    width: calc(100% - 16px) !important;
+    padding: 12px 13px 12px !important;
+  }
+  #cart-drawer .cart-drawer__items { padding-inline: 10px !important; }
+  #cart-drawer .cart-drawer__items .cart-items__table-row {
+    padding: 10px !important;
+    border-radius: 14px;
+  }
+  #cart-drawer .cart-drawer__items img {
+    max-height: 88px !important;
+    max-width: 64px !important;
+  }
+  #cart-drawer .cart-drawer__summary { padding-inline: 12px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cart-drawer .bw-progress-fill { transition: none !important; }
+}
+
+{% endstylesheet %}
+
+
+<style>
+/* BASICKWEAR | unified drawer scroll + visible checkout footer */
+#cart-drawer .theme-drawer__dialog { overflow: hidden !important; }
+#cart-drawer .cart-drawer__inner {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+#cart-drawer cart-items-component,
+#cart-drawer .cart-items-component {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+#cart-drawer .bw-discount-progress { flex: 0 0 auto !important; }
+#cart-drawer scroll-hint.cart-drawer__content {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+#cart-drawer .cart-drawer__summary {
+  position: relative !important;
+  bottom: auto !important;
+  z-index: 30 !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  gap: 6px !important;
+  padding: 10px 12px max(12px, env(safe-area-inset-bottom)) !important;
+  background: #fff !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  opacity: 1 !important;
+}
+#cart-drawer .cart-drawer__summary .cart__checkout-button {
+  background: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+#cart-drawer .cart-drawer__summary .cart__checkout-button::before,
+#cart-drawer .cart-drawer__summary .cart__checkout-button::after {
+  background-image: none !important;
+  box-shadow: none !important;
+}
+#cart-drawer .bw-rec-card .bw-rec-info { min-width: 0 !important; width: auto !important; }
+#cart-drawer .bw-rec-card .bw-rec-add { min-width: 0 !important; width: 100% !important; max-width: 100% !important; }
+@media (max-width: 749px) {
+  #cart-drawer .bw-rec-card { grid-template-columns: 72px minmax(0, 1fr) 60px !important; }
+  #cart-drawer .bw-rec-card .bw-rec-actions { min-width: 0 !important; width: 60px !important; }
+}
+@media (max-width: 380px) {
+  #cart-drawer .bw-rec-card { grid-template-columns: 68px minmax(0, 1fr) 57px !important; }
+  #cart-drawer .bw-rec-card .bw-rec-actions { width: 57px !important; }
+}
+
+</style>
+
+<style>
+  /* BASICKWEAR - HIDE EXTRA CART SUMMARY */
+  #cart-drawer .bw-real-savings-bar,
+  #cart-drawer .cart-totals__original-container,
+  #cart-drawer .cart-actions {
+    display: none !important;
+  }
+
+  #cart-drawer .cart-drawer__summary {
+    gap: 8px !important;
+    padding: 12px 14px 16px !important;
+  }
+
+  #cart-drawer .cart-totals,
+  #cart-drawer .cart-totals__container {
+    gap: 0 !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+</style>
+

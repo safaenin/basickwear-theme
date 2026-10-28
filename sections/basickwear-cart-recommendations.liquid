@@ -1,0 +1,807 @@
+{% comment %}
+  BASICKWEAR CART RECOMMENDATIONS
+  Automatic related products for cart drawer
+{% endcomment %}
+
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+
+  <div class="bw-cart-recommendations">
+
+    <h3 class="bw-rec-title">
+      You may also like...
+    </h3>
+
+    <div class="bw-rec-products">
+
+      {%- for product in recommendations.products limit: 6 -%}
+
+        {%- assign variant = product.selected_or_first_available_variant -%}
+
+        {%- if variant.available -%}
+
+          <div
+            class="bw-rec-card"
+            data-product-id="{{ product.id }}"
+            data-variant-id="{{ variant.id }}"
+          >
+
+            <!-- IMAGE -->
+
+            <a
+              href="{{ product.url }}"
+              class="bw-rec-image-wrap"
+              aria-label="{{ product.title | escape }}"
+            >
+
+              {%- if product.featured_image -%}
+
+                {{
+                  product.featured_image
+                  | image_url: width: 240
+                  | image_tag:
+                    loading: 'lazy',
+                    class: 'bw-rec-image',
+                    alt: product.title
+                }}
+
+              {%- endif -%}
+
+            </a>
+
+
+            <!-- PRODUCT INFORMATION -->
+
+            <div class="bw-rec-info">
+
+              <a
+                href="{{ product.url }}"
+                class="bw-rec-product-title"
+              >
+                {{ product.title }}
+              </a>
+
+
+              <div class="bw-rec-price-area">
+
+                {%- if variant.compare_at_price > variant.price -%}
+
+                  <span class="bw-rec-compare">
+                    {{ variant.compare_at_price | money }}
+                  </span>
+
+                {%- endif -%}
+
+
+                <span class="bw-rec-price">
+                  {{ variant.price | money }}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- RIGHT SIDE -->
+
+            <div class="bw-rec-actions">
+
+              {%- if variant.compare_at_price > variant.price -%}
+
+                {%- assign bw_saving =
+                  variant.compare_at_price
+                  | minus: variant.price
+                -%}
+
+                {%- assign bw_discount =
+                  bw_saving
+                  | times: 100.0
+                  | divided_by: variant.compare_at_price
+                  | round
+                -%}
+
+                <span class="bw-rec-discount">
+                  {{ bw_discount }}% off
+                </span>
+
+              {%- else -%}
+
+                <span class="bw-rec-discount bw-rec-discount-hidden">
+                  0% off
+                </span>
+
+              {%- endif -%}
+
+
+              <button
+                type="button"
+                class="bw-rec-add"
+                data-variant-id="{{ variant.id }}"
+                aria-label="Add {{ product.title | escape }} to cart"
+              >
+
+                <span class="bw-rec-plus">
+                  +
+                </span>
+
+                <span class="bw-rec-add-text">
+                  Add
+                </span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        {%- endif -%}
+
+      {%- endfor -%}
+
+    </div>
+
+  </div>
+
+{%- endif -%}
+
+
+
+{% stylesheet %}
+
+/* =========================================
+   BASICKWEAR CART RECOMMENDATIONS
+========================================= */
+
+.bw-cart-recommendations {
+  display: block;
+
+  width: calc(100% - 16px);
+
+  margin: 7px 8px 12px;
+
+  padding: 10px 8px 11px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e3e3e3;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.bw-rec-title {
+  margin: 0 0 9px;
+
+  padding: 0;
+
+  color: #111111;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================
+   HORIZONTAL SLIDER
+========================================= */
+
+.bw-rec-products {
+  display: flex;
+
+  align-items: stretch;
+
+  gap: 7px;
+
+  width: 100%;
+
+  margin: 0;
+
+  padding: 0 0 3px;
+
+  box-sizing: border-box;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  scroll-snap-type: x proximity;
+
+  overscroll-behavior-inline: contain;
+
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+
+
+.bw-rec-products::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================
+   MINI CARD
+========================================= */
+
+.bw-rec-card {
+  display: grid;
+
+  grid-template-columns:
+    76px 102px 62px;
+
+  grid-template-rows:
+    80px;
+
+  align-items: stretch;
+
+  gap: 6px;
+
+  flex: 0 0 260px;
+
+  width: 260px;
+
+  min-width: 260px;
+
+  height: 94px;
+
+  margin: 0;
+
+  padding: 6px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e2e2e2;
+
+  border-radius: 9px;
+
+  overflow: hidden;
+
+  scroll-snap-align: start;
+}
+
+
+/* =========================================
+   PRODUCT IMAGE
+========================================= */
+
+.bw-rec-image-wrap {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 76px;
+
+  height: 80px;
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  background: #f5f5f5;
+
+  border-radius: 7px;
+
+  text-decoration: none;
+}
+
+
+.bw-rec-image-wrap picture {
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+}
+
+
+.bw-rec-image {
+  display: block !important;
+
+  width: 100% !important;
+
+  height: 100% !important;
+
+  max-width: 100% !important;
+
+  max-height: 100% !important;
+
+  margin: 0 !important;
+
+  padding: 0 !important;
+
+  object-fit: contain !important;
+
+  object-position: center center !important;
+}
+
+
+/* =========================================
+   PRODUCT INFORMATION
+========================================= */
+
+.bw-rec-info {
+  display: flex;
+
+  flex-direction: column;
+
+  width: 102px;
+
+  min-width: 0;
+
+  height: 80px;
+
+  margin: 0;
+
+  padding: 1px 0;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+.bw-rec-product-title {
+  display: -webkit-box;
+
+  width: 100%;
+
+  margin: 0 0 4px;
+
+  padding: 0;
+
+  overflow: hidden;
+
+  color: #111111;
+
+  font-size: 10.5px;
+
+  font-weight: 600;
+
+  line-height: 1.25;
+
+  text-decoration: none;
+
+  word-break: normal;
+
+  -webkit-box-orient: vertical;
+
+  -webkit-line-clamp: 2;
+}
+
+
+.bw-rec-price-area {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+  width: 100%;
+
+  min-width: 0;
+
+  margin-top: auto;
+}
+
+
+.bw-rec-compare {
+  display: block;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  color: #aaaaaa;
+
+  font-size: 9px;
+
+  font-weight: 400;
+
+  line-height: 1.1;
+
+  text-decoration: line-through;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+
+.bw-rec-price {
+  display: block;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  color: #111111;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  line-height: 1.15;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================
+   ACTION AREA
+========================================= */
+
+.bw-rec-actions {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: stretch;
+
+  justify-content: flex-end;
+
+  gap: 5px;
+
+  width: 62px;
+
+  height: 80px;
+
+  min-width: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   DISCOUNT BADGE
+========================================= */
+
+.bw-rec-discount {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
+
+  height: 21px;
+
+  min-height: 21px;
+
+  margin: 0;
+
+  padding: 2px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+
+  background: #000000;
+
+  color: #ffffff;
+
+  border-radius: 4px;
+
+  font-size: 8px;
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  text-align: center;
+
+  white-space: nowrap;
+}
+
+
+.bw-rec-discount-hidden {
+  visibility: hidden;
+}
+
+
+/* =========================================
+   ADD BUTTON
+========================================= */
+
+.bw-rec-add {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 3px;
+
+  width: 100%;
+
+  height: 27px;
+
+  min-height: 27px;
+
+  margin: 0;
+
+  padding: 0 4px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #111111;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+
+  font-size: 9.5px;
+
+  font-weight: 600;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  appearance: none;
+
+  -webkit-appearance: none;
+}
+
+
+.bw-rec-add:hover {
+  background: #111111;
+
+  color: #ffffff;
+}
+
+
+.bw-rec-add:disabled {
+  opacity: 0.55;
+
+  cursor: wait;
+}
+
+
+.bw-rec-plus {
+  display: inline-block;
+
+  font-size: 13px;
+
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+
+.bw-rec-add-text {
+  display: inline-block;
+
+  line-height: 1;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media screen and (max-width: 749px) {
+
+  .bw-cart-recommendations {
+    width: calc(100% - 14px);
+
+    margin:
+      6px 7px 11px;
+
+    padding:
+      9px 7px 10px;
+  }
+
+
+  .bw-rec-title {
+    margin-bottom: 8px;
+
+    font-size: 13px;
+  }
+
+
+  .bw-rec-card {
+    grid-template-columns:
+      72px 96px 60px;
+
+    grid-template-rows:
+      76px;
+
+    gap: 6px;
+
+    flex-basis: 246px;
+
+    width: 246px;
+
+    min-width: 246px;
+
+    height: 90px;
+
+    padding: 6px;
+  }
+
+
+  .bw-rec-image-wrap {
+    width: 72px;
+
+    height: 76px;
+  }
+
+
+  .bw-rec-info {
+    width: 96px;
+
+    height: 76px;
+  }
+
+
+  .bw-rec-actions {
+    width: 60px;
+
+    height: 76px;
+  }
+
+
+  .bw-rec-product-title {
+    font-size: 10px;
+  }
+
+
+  .bw-rec-price {
+    font-size: 10.5px;
+  }
+
+
+  .bw-rec-compare {
+    font-size: 8.5px;
+  }
+
+
+  .bw-rec-discount {
+    height: 20px;
+
+    min-height: 20px;
+
+    font-size: 7.5px;
+  }
+
+
+  .bw-rec-add {
+    height: 26px;
+
+    min-height: 26px;
+
+    font-size: 9px;
+  }
+
+}
+
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media screen and (max-width: 380px) {
+
+  .bw-rec-card {
+    grid-template-columns:
+      68px 92px 57px;
+
+    grid-template-rows:
+      72px;
+
+    flex-basis: 235px;
+
+    width: 235px;
+
+    min-width: 235px;
+
+    height: 86px;
+  }
+
+
+  .bw-rec-image-wrap {
+    width: 68px;
+
+    height: 72px;
+  }
+
+
+  .bw-rec-info {
+    width: 92px;
+
+    height: 72px;
+  }
+
+
+  .bw-rec-actions {
+    width: 57px;
+
+    height: 72px;
+  }
+
+}
+
+/* BASICKWEAR - RECOMMENDATIONS BUTTON FIX */
+
+.bw-rec-card {
+  grid-template-columns: 76px minmax(0, 1fr) 62px;
+  min-width: 0;
+}
+
+@media screen and (max-width: 749px) {
+
+  .bw-rec-card {
+    grid-template-columns: 72px minmax(0, 1fr) 60px;
+    flex: 0 0 246px;
+    width: 246px;
+    min-width: 246px;
+  }
+
+  .bw-rec-info {
+    width: auto;
+    min-width: 0;
+  }
+
+  .bw-rec-actions {
+    width: 60px;
+    min-width: 0;
+  }
+
+  .bw-rec-add {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0 3px;
+  }
+
+}
+
+@media screen and (max-width: 380px) {
+
+  .bw-rec-card {
+    grid-template-columns: 68px minmax(0, 1fr) 57px;
+    flex: 0 0 235px;
+    width: 235px;
+    min-width: 235px;
+  }
+
+  .bw-rec-actions {
+    width: 57px;
+  }
+
+}
+
+{% endstylesheet %}

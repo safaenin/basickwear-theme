@@ -1,0 +1,741 @@
+{%- doc -%}
+  Renders the cart summary totals.
+
+  @param {string} [accelerated_checkout_buttons_layout] - { 'vertical' } Forced layout of the additional checkout buttons, instead of relying on platform's layout.
+  @param {string} [section_id] - The section ID for cart discount component.
+{%- enddoc -%}
+
+{% render 'text-component-shimmer-styles' %}
+{% render 'cart-typography-styles' %}
+
+<div class="cart-totals">
+  {% # We need to keep this node in place to allow morphing to work properly # %}
+  <div class="cart-totals__original-container cart-primary-typography">
+    {%- if cart.cart_level_discount_applications.size > 0 -%}
+      <span class="cart-totals__item cart-totals__original">
+        <span class="cart-totals__original-label">{{ 'content.cart_subtotal' | t }}</span>
+        <span
+          class="cart-totals__original-value cart-secondary-typography"
+          data-testid="cart-subtotal-value"
+        >
+          <bdi>{{- cart.items_subtotal_price | money -}}</bdi>
+        </span>
+      </span>
+      <ul
+        class="cart-discounts"
+        role="list"
+        aria-label="{{ 'content.discounts' | t }}"
+      >
+        {%- for discount in cart.cart_level_discount_applications -%}
+          <li class="cart-discounts__item">
+            <span class="cart-discounts__label">
+              {{- 'icon-discount.svg' | inline_asset_content -}}
+              <bdi>{{ discount.title | escape }}</bdi>
+            </span>
+            <span class="cart-discounts__value cart-secondary-typography"
+              ><bdi>-{{ discount.total_allocated_amount | money }}</bdi>
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  {% if settings.show_cart_note or settings.show_add_discount_code %}
+    <div class="cart-actions">
+      {% if settings.show_cart_note %}
+        <cart-note style="display: flex;">
+          {% capture cart_note_accordion_children %}
+            <details
+              {% if settings.cart_note_open_by_default %}
+                open
+              {% endif %}
+            >
+              <summary class="cart-note__summary">
+                <span class="cart-note__label cart-primary-typography">
+                  {{ 'content.seller_note' | t }}
+                </span>
+
+                <span class="cart-totals__icon">
+                  {{- 'icon-plus.svg' | inline_asset_content -}}
+                </span>
+              </summary>
+
+              <div class="details-content cart-note__inner">
+                <label
+                  for="cart-note"
+                  class="visually-hidden"
+                >
+                  {{- 'content.seller_note' | t -}}
+                </label>
+                <textarea
+                  form="cart-form"
+                  on:input="/updateCartNote"
+                  id="cart-note"
+                  class="cart-note__instructions"
+                  name="note"
+                  data-skip-node-update
+                >{{ cart.note }}</textarea>
+              </div>
+            </details>
+          {% endcapture %}
+          {% render 'accordion-custom-component',
+            children: cart_note_accordion_children,
+            class: 'cart-note',
+            open_by_default_on_desktop: settings.cart_note_open_by_default,
+            open_by_default_on_mobile: settings.cart_note_open_by_default
+          %}
+        </cart-note>
+      {% endif %}
+      {% if settings.show_cart_note and settings.show_add_discount_code %}
+        <div class="cart-actions__divider"></div>
+      {% endif %}
+      {% if settings.show_add_discount_code %}
+        {% liquid
+          assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
+          for item in cart.items
+            for allocation in item.line_level_discount_allocations
+              if allocation.discount_application.type == 'discount_code'
+                assign discount_codes = item.line_level_discount_allocations | slice: forloop.index0 | map: 'discount_application' | map: 'title' | concat: discount_codes
+              endif
+            endfor
+          endfor
+
+          assign discount_codes = discount_codes | uniq
+
+          # Evaluate the boolean expression for the disclosure state
+          if discount_codes.size == 0
+            assign disclosure_expanded = false
+          else
+            assign disclosure_expanded = true
+          endif
+        %}
+
+        {% capture cart_discount_accordion_children %}
+          <details
+            {% if disclosure_expanded %}
+              open
+            {% endif %}
+          >
+            <summary class="cart-discount__summary">
+              <span class="cart-discount__label cart-primary-typography">{{ 'content.discount' | t }}</span>
+
+              <span class="cart-totals__icon">
+                {{- 'icon-plus.svg' | inline_asset_content -}}
+              </span>
+            </summary>
+
+            <div class="details-content">
+              <div id="cart-discount-disclosure">
+                <cart-discount-component
+                  {% if section_id != blank %}
+                    data-section-id="{{ section_id }}"
+                  {% endif %}
+                >
+                  <div class="cart-discount__content">
+                    <form
+                      on:submit="/applyDiscount"
+                      onsubmit="return false;"
+                      class="cart-discount__form"
+                    >
+                      <label
+                        for="cart-discount"
+                        class="visually-hidden"
+                      >
+                        {{- 'accessibility.discount' | t -}}
+                      </label>
+                      <input
+                        id="cart-discount"
+                        class="cart-discount__input"
+                        type="text"
+                        name="discount"
+                        size="8"
+                        placeholder="{{ 'content.discount_code' | t }}"
+                        required
+                        data-skip-node-update
+                      >
+                      <button
+                        type="submit"
+                        class="button cart-discount__button"
+                      >
+                        {{ 'actions.apply' | t }}
+                      </button>
+                    </form>
+                  </div>
+                  <div
+                    class="cart-discount__error hidden"
+                    role="alert"
+                    ref="cartDiscountError"
+                  >
+                    <span class="svg-wrapper">
+                      {{- 'icon-error.svg' | inline_asset_content -}}
+                    </span>
+                    <small
+                      class="cart-discount__error-text cart-primary-typography hidden"
+                      ref="cartDiscountErrorDiscountCode"
+                    >
+                      {{ 'content.discount_code_error' | t: code: 'test' }}
+                    </small>
+                    <small
+                      class="cart-discount__error-text cart-primary-typography hidden"
+                      ref="cartDiscountErrorShipping"
+                    >
+                      {{ 'content.shipping_discount_error' | t }}
+                    </small>
+                  </div>
+                  <ul class="cart-discount__codes">
+                    {% for discount_code in discount_codes %}
+                      <li
+                        class="cart-discount__pill"
+                        data-discount-code="{{ discount_code }}"
+                        aria-label="{{ 'accessibility.discount_applied' | t: code: discount_code }}"
+                      >
+                        <p class="cart-discount__pill-code">
+                          <bdi>{{ discount_code }}</bdi>
+                        </p>
+                        <button
+                          type="button"
+                          on:click="/removeDiscount"
+                          class="cart-discount__pill-remove svg-wrapper svg-wrapper--smaller button-unstyled"
+                          aria-label="{{ 'actions.remove_discount' | t: code: discount_code }}"
+                        >
+                          {{- 'icon-filters-close.svg' | inline_asset_content -}}
+                        </button>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </cart-discount-component>
+              </div>
+            </div>
+          </details>
+        {% endcapture %}
+        {% render 'accordion-custom-component', children: cart_discount_accordion_children, class: 'cart-discount' %}
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {%- liquid
+    if settings.currency_code_enabled_cart_total
+      assign total_price = cart.total_price | money_with_currency
+    else
+      assign total_price = cart.total_price | money
+    endif
+  -%}
+
+  {%- liquid
+    assign bw_original = cart.original_total_price
+    assign bw_final = cart.total_price
+    assign bw_cart_discount = bw_original | minus: bw_final
+    if bw_cart_discount < 0
+      assign bw_cart_discount = 0
+    endif
+    assign bw_percent = 0
+    if bw_original > 0 and bw_cart_discount > 0
+      assign bw_percent = bw_cart_discount | times: 100.0 | divided_by: bw_original | round
+    endif
+
+  -%}
+
+  <div class="cart-totals__container{% if settings.show_installments %} cart-totals__container--has-installments{% endif %}">
+    <details class="bw-order-summary">
+      <summary class="bw-order-summary__toggle">
+        <span class="bw-order-summary__left">
+          <span class="bw-order-summary__icon" aria-hidden="true">₹</span>
+          <span class="bw-order-summary__title">Estimated Total</span>
+          <span class="bw-order-summary__arrow" aria-hidden="true"></span>
+        </span>
+        <span class="bw-order-summary__prices">
+          {%- if bw_cart_discount > 0 -%}
+            <s class="bw-order-summary__old">{{ bw_original | money }}</s>
+          {%- endif -%}
+          <text-component
+            ref="cartTotal"
+            value="{{ total_price | strip_html }}"
+            class="cart-totals__total-value cart-secondary-typography bw-order-summary__total"
+            data-testid="cart-total-value"
+            data-cart-subtotal
+            role="status"
+          ><bdi>{{ total_price }}</bdi></text-component>
+          {%- if bw_cart_discount > 0 -%}
+            <span class="bw-order-summary__percent">({{ bw_percent }}% OFF)</span>
+          {%- endif -%}
+        </span>
+      </summary>
+
+      <div class="bw-order-summary__details">
+        <div class="bw-order-summary__heading">
+          <strong>Order Summary</strong>
+          {%- if bw_cart_discount > 0 -%}
+            <span class="bw-order-summary__badge">{{ bw_cart_discount | money }} saved so far</span>
+          {%- endif -%}
+        </div>
+        <div class="bw-order-summary__row"><span>Cart Subtotal</span><span>{{ bw_original | money }}</span></div>
+        <div class="bw-order-summary__row bw-order-summary__savings"><strong>Total Savings <small class="bw-savings-explain">(actual applied discount)</small></strong><strong class="bw-green">{{ bw_cart_discount | money }}</strong></div>
+       
+<!-- BASICKWEAR HANDLING FEE -->
+
+<div class="bw-order-summary__row bw-handling-fee"
+  style="display:flex!important;justify-content:space-between!important;align-items:center!important;width:100%!important;">
+
+  <span>Handling Fee</span>
+
+  <span style="display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:3px!important;">
+
+    <span style="display:flex!important;align-items:center!important;gap:7px!important;">
+      <s style="color:#dc2626!important;text-decoration:line-through!important;text-decoration-color:#dc2626!important;">₹50</s>
+      <strong style="color:#111!important;font-weight:600!important;">₹00</strong>
+    </span>
+
+    <span style="display:block!important;color:#059669!important;font-size:11px!important;font-weight:700!important;">
+      FREE
+    </span>
+
+  </span>
+</div>
+
+
+        <div class="bw-order-summary__row bw-order-summary__final"><strong>Estimated Total</strong><strong>{{ bw_final | money }}</strong></div>
+      </div>
+    </details>
+    {% if settings.show_installments %}
+      <span class="cart-totals__item cart-totals__installments">
+        {% form 'cart', cart %}
+          {{ form | payment_terms }}
+        {% endform %}
+      </span>
+    {% endif %}
+    <div class="cart-totals__item cart-totals__tax-note cart-primary-typography">
+      {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+    </div>
+  </div>
+</div>
+
+<div class="cart__ctas">
+  <button
+    type="submit"
+    id="checkout"
+    class="cart__checkout-button button"
+    name="checkout"
+    {% if cart == empty %}
+      disabled
+    {% endif %}
+    form="cart-form"
+  >
+    <span class="button-text">
+      {{ 'content.checkout' | t }}
+    </span>
+  </button>
+
+  {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+    <div
+      class="
+        additional-checkout-buttons
+        {% if accelerated_checkout_buttons_layout == 'vertical' %}additional-checkout-buttons--vertical{% endif %}
+      "
+    >
+      {{ content_for_additional_checkout_buttons }}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-block: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    padding-block: 0;
+    margin-block-start: var(--margin-3xs);
+  }
+
+  .cart-actions__divider {
+    border-block-start: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+  }
+
+  .cart-totals:not(:has(.cart-actions)) {
+    margin-block-start: var(--margin-3xs);
+    border-block-start: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    padding-block-start: var(--margin-xl);
+  }
+
+  .cart-totals__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-totals__tax-note {
+    color: var(--color-foreground-subdued);
+  }
+
+  .cart-totals__tax-note a {
+    color: var(--color-foreground-subdued);
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+
+    &:hover {
+      text-decoration-color: transparent;
+    }
+  }
+
+  .cart-totals__tax-note small {
+    font-size: var(--font-size--2xs);
+  }
+
+  .cart-discounts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cart-discounts__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-discounts__label {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-2xs);
+  }
+
+  .cart-discounts__label svg {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    display: inline-block;
+  }
+
+  .cart-totals__original-container,
+  .cart-totals__container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-totals__container {
+    row-gap: var(--gap-2xs);
+
+    &.cart-totals__container--has-installments {
+      row-gap: var(--gap-xs);
+    }
+  }
+
+  .cart-totals__original-container:empty {
+    display: none;
+  }
+
+  .cart-totals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-xl);
+    width: 100%;
+    border-block-start: none;
+
+    &:has(> :first-child:not(.cart-totals__original-container, .cart-totals__container)) {
+      padding-block-start: 0;
+      border-block-start: none;
+    }
+
+    @media screen and (min-width: 750px) {
+      padding-block-start: 0;
+    }
+  }
+
+  .cart-totals__original-container,
+  .cart-totals__original-container * {
+    font-size: var(--cart-font-size--sm);
+  }
+
+  .cart-totals__total {
+    align-items: baseline;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .cart-totals__total-label {
+    font-size: var(--cart-font-size--sm);
+  }
+
+  .cart-totals__total-value {
+    font-size: var(--cart-font-size--xl);
+
+    @media screen and (max-width: 749px) {
+      font-size: var(--font-size--lg);
+    }
+  }
+
+  .cart-totals__installments {
+    color: var(--color-foreground);
+    font-size: var(--font-size--2xs);
+  }
+
+  .cart-note {
+    width: 100%;
+  }
+
+  @starting-style {
+    .cart-note[open-by-default-on-desktop][open-by-default-on-mobile] .details-content {
+      block-size: auto;
+      opacity: 1;
+      overflow-y: visible;
+    }
+  }
+
+  .cart-note__inner {
+    padding-block: var(--padding-2xs) var(--padding-sm);
+  }
+
+  .cart-note__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-note__summary:hover {
+    color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
+  }
+
+  .cart-note__label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap-2xs);
+    font-size: var(--font-size--2xs);
+    font-weight: 500;
+  }
+
+  .cart-note__instructions {
+    color: var(--color-input-text);
+    background-color: var(--color-input-background);
+    border-width: var(--style-border-width-inputs);
+    border-color: var(--color-input-border);
+    transition: box-shadow var(--animation-speed) ease;
+    box-shadow: var(--input-box-shadow);
+    min-height: 5.5rem;
+    min-width: 100%;
+    max-width: 100%;
+    font-size: var(--font-size--sm);
+    padding: max(4px, calc(var(--style-border-radius-inputs) * (1 - cos(45deg))));
+  }
+
+  .cart-totals__icon {
+    height: var(--icon-size-xs);
+    width: var(--icon-size-xs);
+    margin: 0;
+  }
+
+  .cart__ctas {
+    width: 100%;
+    display: grid;
+    gap: var(--checkout-button-gap);
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+
+  .cart__ctas .cart__checkout-button {
+    width: 100%;
+    height: clamp(25px, var(--height-buy-buttons), 55px);
+    padding-inline: var(--padding-4xl);
+  }
+
+  .cart-drawer__summary .cart-totals:not(:has(.cart-totals__original-container:empty)) {
+    border-block-start: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+    padding-block-start: var(--padding-2xl);
+  }
+
+  .cart-drawer__summary .cart-note {
+    @media screen and (min-width: 750px) {
+      margin-block-start: var(--margin-3xs);
+    }
+  }
+
+  .cart-discount__input {
+    background-color: var(--color-input-background);
+    color: var(--color-input-text);
+    border-width: var(--style-border-width-inputs);
+    border-color: var(--color-input-border);
+    border-style: solid;
+    border-radius: var(--style-border-radius-inputs);
+    padding: var(--padding-sm) var(--padding-md);
+    height: 100%;
+    flex-grow: 1;
+    min-width: 0;
+    font-size: var(--font-size--sm);
+  }
+
+  .cart-discount__input::placeholder {
+    color: rgb(var(--color-input-text-rgb) / var(--opacity-subdued-text));
+  }
+
+  .cart-discount__pill-code {
+    overflow: hidden;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .cart-discount {
+    width: 100%;
+  }
+
+  .cart-discount__codes {
+    display: none;
+    gap: var(--padding-xs);
+    flex-wrap: wrap;
+    list-style: none;
+    padding-inline: 0;
+    margin: 0;
+  }
+
+  .cart-discount__codes:has(.cart-discount__pill) {
+    display: flex;
+  }
+
+  .cart-discount__button {
+    height: 100%;
+  }
+
+  .cart-discount__content {
+    height: calc(var(--button-size) + var(--padding-2xs) + var(--padding-sm));
+  }
+
+  .cart-discount__pill {
+    display: flex;
+    color: var(--color-foreground);
+    gap: var(--padding-xs);
+    align-items: center;
+    padding: var(--padding-xs) var(--padding-sm);
+    border-radius: var(--style-border-radius-pills);
+    background-color: var(--color-input-background);
+    text-transform: uppercase;
+  }
+
+  .cart-discount__form {
+    display: flex;
+    gap: var(--padding-md);
+    align-items: center;
+    height: 100%;
+    padding-block: var(--padding-2xs) var(--padding-sm);
+  }
+
+  :is(.cart-discount__pill-remove, .cart-discount__pill-remove:hover) {
+    --close-icon-opacity: 0.4;
+
+    color: var(--color-foreground);
+    background-color: transparent;
+    pointer-events: all;
+    cursor: pointer;
+    height: 100%;
+  }
+
+  .cart-discount__error {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-block: var(--padding-2xs) var(--padding-sm);
+  }
+
+  .cart-discount__error .svg-wrapper {
+    flex-shrink: 0;
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+    margin-inline: var(--margin-3xs) var(--margin-xs);
+  }
+
+  .cart-discount__error-text {
+    margin-block-start: var(--margin-3xs);
+  }
+
+  .cart-discount__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-discount__summary:hover {
+    color: rgb(var(--color-rgb, var(--color-foreground-rgb)) / var(--opacity-subdued-text));
+  }
+
+  .cart-discount__label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap-2xs);
+    font-size: var(--font-size--2xs);
+    font-weight: 500;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-summary--extend {
+      height: 100%;
+    }
+  }
+  /* BASICKWEAR — compact expandable real order summary */
+  #cart-drawer .cart-totals__tax-note { display: none !important; }
+  #cart-drawer .cart-drawer__summary { gap: 6px !important; padding: 9px 12px 12px !important; }
+  #cart-drawer .cart-totals { gap: 5px !important; }
+  #cart-drawer .cart-totals__container { gap: 0 !important; }
+  #cart-drawer .cart__ctas .cart__checkout-button {
+    display: flex !important; justify-content: center; align-items: center;
+    width: calc(100% - 28px) !important; min-height: 44px !important;
+    height: 44px !important; padding: 8px 12px !important;
+    margin: 0 auto !important; border-radius: 12px !important;
+    background: #000 !important; color: #fff !important;
+    font-size: 13px !important; box-shadow: none !important;
+  }
+  #cart-drawer .bw-order-summary { width: 100%; color: #111; }
+  #cart-drawer .bw-order-summary__toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; cursor: pointer; list-style: none; padding: 2px 0;
+  }
+  #cart-drawer .bw-order-summary__toggle::-webkit-details-marker { display: none; }
+  #cart-drawer .bw-order-summary__left {
+    display: inline-flex; align-items: center; gap: 8px; min-width: 0;
+  }
+  #cart-drawer .bw-order-summary__icon {
+    display: grid; place-items: center; width: 25px; height: 29px;
+    background: #4b5563; color: #fff; border-radius: 4px;
+    font-size: 16px; font-weight: 700; flex-shrink: 0;
+  }
+  #cart-drawer .bw-order-summary__title { font-size: 13px; font-weight: 650; white-space: nowrap; }
+  #cart-drawer .bw-order-summary__arrow {
+    width: 8px; height: 8px; border-right: 2px solid #6b7280;
+    border-bottom: 2px solid #6b7280; transform: rotate(45deg);
+    transition: transform .2s ease; flex-shrink: 0;
+  }
+  #cart-drawer .bw-order-summary[open] .bw-order-summary__arrow { transform: rotate(225deg); }
+  #cart-drawer .bw-order-summary__prices {
+    display: flex; flex-direction: column; align-items: flex-end;
+    text-align: right; gap: 2px; min-width: 0;
+  }
+  #cart-drawer .bw-order-summary__old { color: #aaa; font-size: 11px; }
+  #cart-drawer .bw-order-summary__total { font-size: 16px !important; font-weight: 700; line-height: 1.15; }
+  #cart-drawer .bw-order-summary__percent, #cart-drawer .bw-green { color: #059669; font-size: 12px; font-weight: 650; }
+  #cart-drawer .bw-order-summary__details {
+    margin-top: 8px; padding: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 12px;
+  }
+  #cart-drawer .bw-order-summary__heading,
+  #cart-drawer .bw-order-summary__row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; padding: 6px 0; font-size: 12px;
+  }
+  #cart-drawer .bw-order-summary__heading { margin-bottom: 5px; font-size: 13px; }
+  #cart-drawer .bw-order-summary__badge {
+    background: #e7f7ef; border-radius: 5px; padding: 6px 8px;
+    color: #059669; font-size: 11px; font-weight: 650; text-align: right;
+  }
+  #cart-drawer .bw-order-summary__row > :last-child { text-align: right; flex-shrink: 0; }
+  #cart-drawer .bw-order-summary__breakdown { color: #6b7280; font-size: 11px; padding: 3px 0; }
+  #cart-drawer .bw-order-summary__breakdown > :last-child { flex-shrink: 0; }
+  #cart-drawer .bw-order-summary__savings { margin-top: 6px; border-top: 1px solid #e5e7eb; padding-top: 10px; }
+  #cart-drawer .bw-order-summary__final { border-top: 1px solid #ddd; margin-top: 5px; padding-top: 10px; font-weight: 700; }
+  @media (max-width: 420px) {
+    #cart-drawer .bw-order-summary__title { font-size: 12px; }
+    #cart-drawer .bw-order-summary__total { font-size: 14px !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #cart-drawer .bw-order-summary__arrow { transition: none; }
+  }
+  #cart-drawer .bw-savings-explain {
+    font-size: 10px; color: #6b7280; font-weight: 400;
+  }
+{% endstylesheet %}

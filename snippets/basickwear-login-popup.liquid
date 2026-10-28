@@ -1,0 +1,554 @@
+
+{% unless customer %}
+
+<style>
+  #bw-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  #bw-popup-overlay.bw-show {
+    display: flex;
+  }
+
+  #bw-popup-overlay *,
+  #bw-popup-overlay *::before,
+  #bw-popup-overlay *::after {
+    box-sizing: border-box;
+  }
+
+  .bw-popup-box {
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90dvh;
+    background: #fff;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: 55% 45%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 25px 80px rgba(0,0,0,.3);
+  }
+
+  .bw-popup-image {
+    position: relative;
+    min-height: 530px;
+    background: #292929;
+  }
+
+  .bw-popup-image img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+  }
+
+  .bw-popup-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      transparent 45%,
+      rgba(0,0,0,.65)
+    );
+  }
+
+  .bw-popup-brand {
+    position: absolute;
+    bottom: 30px;
+    left: 25px;
+    z-index: 1;
+    color: #fff;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  .bw-popup-content {
+    padding: 65px 30px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+
+  .bw-popup-close {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 5;
+    width: 35px;
+    height: 35px;
+    background: white;
+    color: #111;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .bw-popup-title {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    margin: 0 0 10px;
+    letter-spacing: -.7px;
+  }
+
+  .bw-popup-subtitle {
+    font-size: 14px;
+    text-align: center;
+    color: #555;
+    margin: 0 0 8px;
+  }
+
+  .bw-popup-description {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 26px;
+  }
+
+  .bw-popup-field {
+    width: 100%;
+    height: 54px;
+    border: 1px solid #d6d6d6;
+    border-radius: 9px;
+    padding: 0 16px;
+    background: #fff;
+    color: #111;
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  .bw-popup-field:focus {
+    outline: 2px solid #111;
+    outline-offset: 1px;
+  }
+
+  .bw-popup-button {
+    display: block;
+    width: 100%;
+    min-height: 51px;
+    border: none;
+    border-radius: 9px;
+    background: #111;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    padding: 15px;
+    text-decoration: none;
+  }
+
+  .bw-popup-button:hover {
+    background: #333;
+  }
+
+  .bw-popup-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    color: #888;
+    font-size: 12px;
+  }
+
+  .bw-popup-divider::before,
+  .bw-popup-divider::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: #ddd;
+  }
+
+  .bw-popup-secondary {
+    background: #f1f1f1;
+    color: #111;
+  }
+
+  .bw-popup-secondary:hover {
+    background: #e5e5e5;
+  }
+
+  .bw-popup-policy {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.7;
+    text-align: center;
+    margin: 20px 0 0;
+  }
+
+  .bw-popup-policy a {
+    color: #333;
+    text-decoration: underline;
+  }
+
+  html.bw-popup-locked {
+    overflow: hidden !important;
+  }
+
+  @media (max-width: 700px) {
+    #bw-popup-overlay {
+      padding: 12px;
+    }
+
+    .bw-popup-box {
+      display: block;
+      max-width: 420px;
+      overflow-y: auto;
+      border-radius: 14px;
+    }
+
+    .bw-popup-image {
+      height: 180px;
+      min-height: 180px;
+    }
+
+    .bw-popup-brand {
+      font-size: 29px;
+      left: 18px;
+      bottom: 17px;
+    }
+
+    .bw-popup-content {
+      padding: 26px 20px;
+    }
+
+    .bw-popup-title {
+      font-size: 23px;
+    }
+
+    .bw-popup-description {
+      margin-bottom: 20px;
+    }
+
+    .bw-popup-close {
+      top: 12px;
+      right: 12px;
+    }
+  }
+
+  @media (max-height: 550px) {
+    .bw-popup-box {
+      overflow-y: auto;
+    }
+  }
+</style>
+
+<div
+  id="bw-popup-overlay"
+  aria-hidden="true"
+>
+  <div
+    class="bw-popup-box"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="bw-popup-heading"
+    tabindex="-1"
+  >
+
+    <button
+      type="button"
+      class="bw-popup-close"
+      id="bw-popup-close"
+      aria-label="Close login popup"
+    >
+      &times;
+    </button>
+
+    <div class="bw-popup-image">
+  
+<img
+ 
+src="{{ 'BASICKWEAR Urban Lookbook.png' | asset_url }}"
+
+  alt="BASICKWEAR Collection"
+  width="900"
+  height="1100"
+  loading="lazy"
+>
+
+
+      <div class="bw-popup-brand">
+        BASICKWEAR.
+      </div>
+    </div>
+
+    <div class="bw-popup-content">
+
+      <h2
+        class="bw-popup-title"
+        id="bw-popup-heading"
+      >
+        JOIN THE BASICKWEAR CLUB
+      </h2>
+
+      <p class="bw-popup-subtitle">
+        Everyday essentials. Elevated style.
+      </p>
+
+      <p class="bw-popup-description">
+        Log in to shop the collection.
+      </p>
+
+      <form id="bw-popup-form">
+
+        <label
+          for="bw-popup-email"
+          style="display:block;font-size:13px;margin-bottom:8px;"
+        >
+          Email Address
+        </label>
+
+        <input
+          type="email"
+          id="bw-popup-email"
+          class="bw-popup-field"
+          placeholder="Enter Email Address*"
+          autocomplete="email"
+          required
+        >
+
+        <button
+          type="submit"
+          class="bw-popup-button"
+        >
+          JOIN US
+        </button>
+
+      </form>
+
+      <div class="bw-popup-divider">
+        SECURE CUSTOMER LOGIN
+      </div>
+
+      <a
+        href="{{ routes.account_login_url }}"
+        class="bw-popup-button bw-popup-secondary"
+      >
+        LOGIN / CREATE ACCOUNT
+      </a>
+
+      <p class="bw-popup-policy">
+        Secure customer login is handled by Shopify.
+        Verification may be required.
+
+        <br>
+
+        {% if shop.privacy_policy != blank %}
+          <a href="{{ shop.privacy_policy.url }}">
+            Privacy Policy
+          </a>
+        {% endif %}
+
+        {% if shop.terms_of_service != blank %}
+          &nbsp;
+          <a href="{{ shop.terms_of_service.url }}">
+            Terms of Service
+          </a>
+        {% endif %}
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  if (window.__basickwearPopupReady) return;
+  window.__basickwearPopupReady = true;
+
+  const overlay = document.getElementById('bw-popup-overlay');
+  const modal = overlay?.querySelector('.bw-popup-box');
+  const closeBtn = document.getElementById('bw-popup-close');
+  const form = document.getElementById('bw-popup-form');
+  const emailInput = document.getElementById('bw-popup-email');
+  const loginUrl = {{ routes.account_login_url | json }};
+  const storageKey = 'basickwear_popup_seen';
+
+  if (!overlay || !modal) return;
+
+  let lastFocusedElement = null;
+  let alreadySeen = false;
+
+  try {
+    alreadySeen = sessionStorage.getItem(storageKey) === '1';
+  } catch (error) {}
+
+  function markSeen() {
+    alreadySeen = true;
+
+    try {
+      sessionStorage.setItem(storageKey, '1');
+    } catch (error) {}
+  }
+
+  function openPopup() {
+    if (overlay.classList.contains('bw-show')) return;
+
+    lastFocusedElement = document.activeElement;
+
+    overlay.classList.add('bw-show');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('bw-popup-locked');
+
+    markSeen();
+    closeBtn.focus();
+  }
+
+  function closePopup() {
+    overlay.classList.remove('bw-show');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('bw-popup-locked');
+
+    if (lastFocusedElement?.focus) {
+      lastFocusedElement.focus();
+    }
+  }
+
+  window.BasickwearLoginPopup = {
+    open: openPopup,
+    close: closePopup
+  };
+
+  closeBtn.addEventListener('click', closePopup);
+
+  overlay.addEventListener('click', function(event) {
+    if (event.target === overlay) {
+      closePopup();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (!overlay.classList.contains('bw-show')) return;
+
+    if (event.key === 'Escape') {
+      closePopup();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const focusable = Array.from(
+      modal.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled])'
+      )
+    ).filter(function(element) {
+      return element.getClientRects().length > 0;
+    });
+
+    if (!focusable.length) {
+      event.preventDefault();
+      modal.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (
+      event.shiftKey &&
+      document.activeElement === first
+    ) {
+      event.preventDefault();
+      last.focus();
+    } else if (
+      !event.shiftKey &&
+      document.activeElement === last
+    ) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if (!emailInput.reportValidity()) return;
+
+    const email = emailInput.value.trim();
+    if (!email) return;
+
+    markSeen();
+
+    const destination = new URL(
+      loginUrl,
+      window.location.origin
+    );
+
+    destination.searchParams.set('login_hint', email);
+
+    window.location.href = destination.toString();
+  });
+
+  document.addEventListener('click', function(event) {
+    const link = event.target.closest('a[href]');
+
+    if (!link) return;
+    if (link.closest('#bw-popup-overlay')) return;
+
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.altKey
+    ) return;
+
+    if (link.target && link.target !== '_self') return;
+
+    const destination = new URL(
+      link.href,
+      window.location.origin
+    );
+
+    const accountLogin = new URL(
+      loginUrl,
+      window.location.origin
+    );
+
+    const isLoginLink =
+      destination.origin === window.location.origin &&
+      destination.pathname.replace(/\/$/, '') ===
+      accountLogin.pathname.replace(/\/$/, '');
+
+    if (isLoginLink) {
+      event.preventDefault();
+      openPopup();
+    }
+  });
+
+  function autoOpen() {
+    if (alreadySeen) return;
+
+    window.setTimeout(function() {
+      if (!alreadySeen) openPopup();
+    }, 900);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      autoOpen,
+      { once: true }
+    );
+  } else {
+    autoOpen();
+  }
+})();
+</script>
+
+{% endunless %}

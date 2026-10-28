@@ -1,0 +1,555 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "product-information",
+      "blocks": {
+        "disclosures_g9mWze": {
+          "type": "disclosures",
+          "name": "t:names.disclosures",
+          "settings": {
+            "heading": "Disclosures",
+            "heading_preset": "h5",
+            "open_by_default": false,
+            "icon": "caret",
+            "disclosure_heading_preset": "h6",
+            "text_color": "",
+            "dividers": true,
+            "divider_color": "{{ settings.color_palette.color2 }}",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "vol_countdown_timer_countdown_product_page_RteAMd": {
+          "type": "shopify://apps/vol-countdown-timer/blocks/countdown-product-page/019c9a25-ac89-7426-aadc-28e74cd8f97b",
+          "settings": {}
+        },
+        "media-gallery": {
+          "type": "_product-media-gallery",
+          "static": true,
+          "settings": {
+            "media_presentation": "carousel",
+            "media_columns": "one",
+            "image_gap": 4,
+            "large_first_image": false,
+            "icons_style": "arrow",
+            "slideshow_controls_style": "thumbnails",
+            "slideshow_mobile_controls_style": "dots",
+            "thumbnail_position": "right",
+            "thumbnail_width": 44,
+            "thumbnail_radius": 0,
+            "aspect_ratio": "adapt",
+            "constrain_to_viewport": true,
+            "media_fit": "contain",
+            "media_radius": 0,
+            "extend_media": false,
+            "zoom": true,
+            "video_loop": false,
+            "hide_variants": true,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "product-details": {
+          "type": "_product-details",
+          "static": true,
+          "settings": {
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "details_position": "flex-start",
+            "gap": 28,
+            "sticky_details_desktop": true,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 24,
+            "padding-block-end": 24,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "vol_countdown_timer_countdown_product_page_rB8RcT": {
+              "type": "shopify://apps/vol-countdown-timer/blocks/countdown-product-page/019c9a25-ac89-7426-aadc-28e74cd8f97b",
+              "settings": {}
+            },
+            "group_icgrde": {
+              "type": "group",
+              "name": "t:names.header",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_xrnftG": {
+                  "type": "text",
+                  "name": "t:names.product_title",
+                  "settings": {
+                    "text": "<h1>{{ closest.product.title }}</h1>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "price_tVjtKg": {
+                  "type": "price",
+                  "settings": {
+                    "show_sale_price_first": true,
+                    "show_installments": false,
+                    "show_tax_info": false,
+                    "type_preset": "paragraph",
+                    "width": "100%",
+                    "alignment": "left",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "text_color": "",
+                    "padding-block-start": 4,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_xrnftG",
+                "price_tVjtKg"
+              ]
+            },
+            "divider_VJhene": {
+              "type": "_divider",
+              "name": "t:names.divider",
+              "settings": {
+                "thickness": 1,
+                "corner_radius": "square",
+                "divider_color": "{{ settings.color_palette.color2 }}",
+                "width_percent": 100,
+                "padding-block-start": 0,
+                "padding-block-end": 0
+              },
+              "blocks": {}
+            },
+            "custom_liquid_WFHArW": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
+              "settings": {
+                "custom_liquid": "<style>\n  /* BASICKWEAR SIZING CHART */\n  .bw-size-info {\n    margin: 8px 0 12px;\n    font-family: inherit;\n  }\n\n  .bw-size-chart summary {\n    display: inline-flex;\n    align-items: center;\n    gap: 10px;\n    cursor: pointer;\n    font-size: 18px;\n    font-weight: 400;\n    list-style: none;\n  }\n\n  .bw-size-chart summary::-webkit-details-marker {\n    display: none;\n  }\n\n  .bw-size-chart table {\n    width: 100%;\n    border-collapse: collapse;\n    margin-top: 12px;\n    font-size: 13px;\n    text-align: center;\n  }\n\n  .bw-size-chart th,\n  .bw-size-chart td {\n    border: 1px solid #ddd;\n    padding: 10px 6px;\n  }\n\n  .bw-model-details {\n    font-size: 18px;\n    font-weight: 400;\n    line-height: 1.4;\n    margin-top: 6px;\n  }\n\n  @media (max-width: 749px) {\n    .bw-size-chart summary,\n    .bw-model-details {\n      font-size: 16px;\n    }\n  }\n</style>\n\n<div class=\"bw-size-info\">\n\n  <details class=\"bw-size-chart\">\n    <summary>\n      <span>▤</span>\n      <span>Sizing chart</span>\n    </summary>\n\n    <table>\n      <thead>\n        <tr>\n          <th>Size</th>\n          <th>Chest</th>\n          <th>Length</th>\n          <th>Shoulder</th>\n        </tr>\n      </thead>\n\n      <tbody>\n        <tr>\n          <td>S</td>\n          <td>42</td>\n          <td>27</td>\n          <td>20</td>\n        </tr>\n\n        <tr>\n          <td>M</td>\n          <td>44</td>\n          <td>28</td>\n          <td>21</td>\n        </tr>\n\n        <tr>\n          <td>L</td>\n          <td>46</td>\n          <td>29</td>\n          <td>22</td>\n        </tr>\n\n        <tr>\n          <td>XL</td>\n          <td>48</td>\n          <td>30</td>\n          <td>23</td>\n        </tr>\n      </tbody>\n    </table>\n\n    <p style=\"font-size:12px;color:#777;\">\n      Measurements in inches.\n    </p>\n  </details>\n\n  <div class=\"bw-model-details\">\n    Model is 5'8\" (172 cm), 70 kg, Wearing M Size\n  </div>\n\n</div>"
+              },
+              "blocks": {}
+            },
+            "variant_picker_R3rGDr": {
+              "type": "variant-picker",
+              "settings": {
+                "variant_style": "buttons",
+                "show_swatches": false,
+                "option_label_text_color": "",
+                "variant_style_class": "default",
+                "custom_variant_background": "{{ settings.color_palette.background }}",
+                "custom_variant_text": "{{ settings.color_palette.foreground }}",
+                "custom_variant_border": "{{ settings.color_palette.foreground }}",
+                "selected_variant_style_class": "default",
+                "custom_selected_variant_background": "{{ settings.color_palette.foreground }}",
+                "custom_selected_variant_text": "{{ settings.color_palette.background }}",
+                "custom_selected_variant_border": "{{ settings.color_palette.foreground }}",
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "buy_buttons_eYQEYi": {
+              "type": "buy-buttons",
+              "settings": {
+                "stacking": true,
+                "text_color": "",
+                "show_pickup_availability": false,
+                "gift_card_form": true,
+                "recipient_button_style": "default",
+                "recipient_button_background": "{{ settings.color_palette.background }}",
+                "recipient_button_text": "{{ settings.color_palette.foreground }}",
+                "recipient_button_border": "{{ settings.color_palette.foreground }}",
+                "selected_recipient_button_style": "default",
+                "selected_recipient_button_background": "{{ settings.color_palette.foreground }}",
+                "selected_recipient_button_text": "{{ settings.color_palette.background }}",
+                "selected_recipient_button_border": "{{ settings.color_palette.foreground }}",
+                "input_style": "default",
+                "input_background_color": "{{ settings.color_palette.background }}",
+                "input_text_color": "{{ settings.color_palette.foreground }}",
+                "input_border_color": "{{ settings.color_palette.foreground }}",
+                "border_width": 1,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "quantity": {
+                  "type": "quantity",
+                  "static": true,
+                  "settings": {
+                    "input_style": "default",
+                    "input_background_color": "{{ settings.color_palette.background }}",
+                    "input_text_color": "{{ settings.color_palette.foreground }}",
+                    "input_border_color": "{{ settings.color_palette.foreground }}",
+                    "border_width": 1,
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                },
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}"
+                  },
+                  "blocks": {}
+                },
+                "accelerated-checkout": {
+                  "type": "accelerated-checkout",
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                }
+              },
+              "block_order": []
+            },
+            "custom_liquid_GAXbqn": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
+              "settings": {
+                "custom_liquid": "<style>\n  /* BASICKWEAR PRODUCT TABS */\n  .bw-tabs {\n    width: 100%;\n    margin: 20px 0;\n    font-family: inherit;\n  }\n\n  .bw-tab-buttons {\n    display: flex;\n    width: 100%;\n    border-bottom: 1px solid #ddd;\n  }\n\n  .bw-tab-btn {\n    flex: 1;\n    min-width: 0;\n    background: transparent;\n    border: none;\n    border-bottom: 2px solid transparent;\n    padding: 14px 4px;\n    font-family: inherit;\n    font-size: 15px;\n    font-weight: 400;\n    color: #666;\n    cursor: pointer;\n    text-align: center;\n    transition: color .2s ease;\n  }\n\n  .bw-tab-btn.active {\n    color: #111;\n    border-bottom-color: #111;\n  }\n\n  /* TAB CONTENT */\n  .bw-tab-panel {\n    display: none;\n    padding: 18px 0;\n    font-family: inherit;\n    font-size: 14px;\n    font-weight: 400;\n    line-height: 1.8;\n    letter-spacing: .2px;\n    color: #333;\n  }\n\n  .bw-tab-panel.active {\n    display: block;\n  }\n\n  .bw-tab-panel p {\n    margin: 0 0 16px;\n  }\n\n  /* EXCHANGE POLICY */\n  .bw-policy-content p {\n    margin: 0 0 22px;\n    font-size: 14px;\n    line-height: 1.85;\n    letter-spacing: .2px;\n  }\n\n  .bw-policy-content strong {\n    color: #111;\n    font-weight: 700;\n  }\n\n  .bw-policy-link {\n    margin-top: 24px !important;\n  }\n\n  .bw-policy-link a {\n    color: #111;\n    font-size: 13px;\n    text-decoration: underline;\n    text-underline-offset: 4px;\n  }\n\n  .bw-policy-link a:hover {\n    color: #666;\n  }\n\n  /* MOBILE */\n  @media screen and (max-width: 749px) {\n    .bw-tabs {\n      margin: 15px 0;\n    }\n\n    .bw-tab-btn {\n      font-size: 12px;\n      padding: 12px 2px;\n    }\n\n    .bw-tab-panel {\n      padding: 16px 0;\n      font-size: 13px;\n      line-height: 1.75;\n    }\n\n    .bw-policy-content p {\n      font-size: 13px;\n      line-height: 1.8;\n      margin-bottom: 18px;\n    }\n\n    .bw-policy-link a {\n      font-size: 12px;\n    }\n  }\n</style>\n\n<div class=\"bw-tabs\" id=\"bw-tabs-{{ section.id }}\">\n\n  <!-- TAB BUTTONS -->\n  <div class=\"bw-tab-buttons\" role=\"tablist\">\n\n    <button\n      type=\"button\"\n      class=\"bw-tab-btn active\"\n      data-tab=\"description\"\n      role=\"tab\"\n      aria-selected=\"true\">\n      Description\n    </button>\n\n    <button\n      type=\"button\"\n      class=\"bw-tab-btn\"\n      data-tab=\"details\"\n      role=\"tab\"\n      aria-selected=\"false\">\n      Details\n    </button>\n\n    <button\n      type=\"button\"\n      class=\"bw-tab-btn\"\n      data-tab=\"exchange\"\n      role=\"tab\"\n      aria-selected=\"false\">\n      Exchange Policy\n    </button>\n\n  </div>\n\n  <!-- DESCRIPTION -->\n  <div class=\"bw-tab-panel active\"\n       data-panel=\"description\">\n\n    {{ product.description }}\n\n  </div>\n\n  <!-- PRODUCT DETAILS -->\n  <div class=\"bw-tab-panel\"\n       data-panel=\"details\">\n\n    <p><strong>Brand:</strong> BASICKWEAR</p>\n\n    <p><strong>Fit:</strong> Oversized / Relaxed</p>\n\n    <p><strong>Care:</strong> Machine wash cold, inside out.</p>\n\n    <p><strong>Note:</strong> Product details may vary by style.</p>\n\n  </div>\n\n  <!-- EXCHANGE POLICY -->\n  <div class=\"bw-tab-panel\"\n       data-panel=\"exchange\">\n\n    <div class=\"bw-policy-content\">\n\n      <p>\n        <strong>Returns</strong> –\n        Accepted only for defective, damaged,\n        incorrect or undelivered products.\n        Requests must be raised within 24 hours.\n      </p>\n\n      <p>\n        <strong>Refunds</strong> –\n        Approved returns are processed as\n        store credit, subject to our refund policy.\n      </p>\n\n      <p>\n        <strong>Exchanges</strong> –\n        Size exchanges are allowed within\n        24–48 hours of delivery, subject to\n        stock availability and applicable charges.\n      </p>\n\n      <p>\n        <strong>Important Notes</strong> –\n        Only one exchange is permitted per order.\n        Sale items are not eligible for\n        return or exchange.\n      </p>\n\n      {% if shop.refund_policy != blank %}\n        <p class=\"bw-policy-link\">\n          <a href=\"{{ shop.refund_policy.url }}\">\n            View Full Return & Exchange Policy →\n          </a>\n        </p>\n      {% endif %}\n\n    </div>\n\n  </div>\n\n</div>\n\n<script>\n(function () {\n\n  const tabs = document.getElementById(\n    'bw-tabs-{{ section.id }}'\n  );\n\n  if (!tabs || tabs.dataset.initialized) return;\n\n  tabs.dataset.initialized = 'true';\n\n  tabs.addEventListener('click', function(event) {\n\n    const button = event.target.closest('.bw-tab-btn');\n\n    if (!button || !tabs.contains(button)) return;\n\n    const selected = button.dataset.tab;\n\n    tabs.querySelectorAll('.bw-tab-btn').forEach(function(btn) {\n\n      const active = btn === button;\n\n      btn.classList.toggle('active', active);\n\n      btn.setAttribute(\n        'aria-selected',\n        String(active)\n      );\n\n    });\n\n    tabs.querySelectorAll('.bw-tab-panel').forEach(function(panel) {\n\n      panel.classList.toggle(\n        'active',\n        panel.dataset.panel === selected\n      );\n\n    });\n\n  });\n\n})();\n</script>"
+              },
+              "blocks": {}
+            },
+            "text_aEtTtq": {
+              "type": "text",
+              "name": "t:names.product_description",
+              "disabled": true,
+              "settings": {
+                "text": "{{ closest.product.description }}",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "vol_countdown_timer_countdown_product_page_rB8RcT",
+            "group_icgrde",
+            "divider_VJhene",
+            "custom_liquid_WFHArW",
+            "variant_picker_R3rGDr",
+            "buy_buttons_eYQEYi",
+            "custom_liquid_GAXbqn",
+            "text_aEtTtq"
+          ]
+        }
+      },
+      "block_order": [
+        "disclosures_g9mWze",
+        "vol_countdown_timer_countdown_product_page_RteAMd"
+      ],
+      "settings": {
+        "content_width": "content-center-aligned",
+        "desktop_media_position": "left",
+        "equal_columns": true,
+        "limit_details_width": false,
+        "gap": 48,
+        "enable_sticky_add_to_cart": true,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "custom_liquid_6cjUKb": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "<style>\n.bw-highlights {\n  width: 100%;\n  padding: 25px 0 40px;\n  overflow: hidden;\n}\n\n.bw-highlights-title {\n  text-align: center;\n  font-size: 16px;\n  font-weight: 700;\n  letter-spacing: 1.5px;\n  margin: 0 0 20px;\n  text-transform: uppercase;\n}\n\n.bw-highlights-track {\n  display: flex;\n  gap: 3px;\n  overflow-x: auto;\n  scroll-snap-type: x mandatory;\n  scrollbar-width: none;\n}\n\n.bw-highlights-track::-webkit-scrollbar {\n  display: none;\n}\n\n.bw-highlight-card {\n  position: relative;\n  flex: 0 0 calc((100% - 9px) / 4);\n  min-width: 0;\n  overflow: hidden;\n  scroll-snap-align: start;\n}\n\n.bw-highlight-card img {\n  display: block;\n  width: 100%;\n  height: 550px;\n  object-fit: cover;\n}\n\n.bw-highlight-label {\n  position: absolute;\n  bottom: 25px;\n  right: 12px;\n  max-width: 85%;\n  background: #000;\n  color: #fff;\n  padding: 6px 10px;\n  font-size: 13px;\n  line-height: 1.3;\n  text-align: right;\n  text-transform: uppercase;\n}\n\n@media (max-width: 749px) {\n  .bw-highlight-card {\n    flex: 0 0 80%;\n  }\n\n  .bw-highlight-card img {\n    height: 440px;\n  }\n\n  .bw-highlights-title {\n    font-size: 14px;\n  }\n}\n</style>\n\n{% if product != blank and product.images.size > 0 %}\n<div class=\"bw-highlights\">\n  <h2 class=\"bw-highlights-title\">\n    KEY HIGHLIGHTS\n  </h2>\n\n  <div class=\"bw-highlights-track\">\n    {% for image in product.images limit: 4 %}\n      <div class=\"bw-highlight-card\">\n\n        <img\n          src=\"{{ image | image_url: width: 1000 }}\"\n          alt=\"{{ image.alt | escape }}\"\n          loading=\"lazy\"\n          width=\"{{ image.width }}\"\n          height=\"{{ image.height }}\"\n        >\n\n        <div class=\"bw-highlight-label\">\n          {% case forloop.index %}\n            {% when 1 %}\n              PREMIUM STREETWEAR FIT\n            {% when 2 %}\n              UNIQUE BACK ARTWORK\n            {% when 3 %}\n              SIGNATURE DESIGN DETAILS\n            {% when 4 %}\n              COMFORT MEETS STYLE\n          {% endcase %}\n        </div>\n\n      </div>\n    {% endfor %}\n  </div>\n</div>\n{% endif %}",
+        "background_color": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "product_recommendations_qggXJq": {
+      "type": "product-recommendations",
+      "blocks": {
+        "text_cbcgyb": {
+          "type": "text",
+          "name": "t:names.header",
+          "settings": {
+            "text": "<h3>You may also like&nbsp;</h3>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h4",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 8,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_card_gallery_DNizbJ": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title_M7MJkb": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_gLWgA6": {
+              "type": "price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product_card_gallery_DNizbJ",
+            "product_title_M7MJkb",
+            "price_gLWgA6"
+          ]
+        }
+      },
+      "block_order": [
+        "text_cbcgyb"
+      ],
+      "custom_css": [
+        "/* BASICKWEAR - Center Heading */.header {width: 100% !important; max-width: none !important; grid-column: 1 / -1 !important; justify-self: stretch !important;}",
+        ".header > * {width: 100% !important; max-width: none !important; text-align: center !important;}",
+        ".header h2,.header h3,.header p {text-align: center !important;}"
+      ],
+      "name": "t:names.product_recommendations",
+      "settings": {
+        "product": "{{ closest.product }}",
+        "recommendation_type": "related",
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "max_products": 4,
+        "columns": 4,
+        "mobile_columns": "2",
+        "columns_gap": 12,
+        "rows_gap": 24,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 28,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "1791958563164ad4c5": {
+      "type": "_blocks",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_liquid_6cjUKb",
+    "product_recommendations_qggXJq",
+    "1791958563164ad4c5"
+  ]
+}

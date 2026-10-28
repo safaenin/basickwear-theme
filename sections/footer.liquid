@@ -1,0 +1,492 @@
+
+{% comment %}
+  BASICKWEAR PREMIUM FOOTER
+  Shopify Horizon Theme
+{% endcomment %}
+
+<style>
+  .bw-footer-section {
+    background: #f5f5f5;
+    padding: 12px 1% 0;
+    overflow: hidden;
+  }
+
+  .bw-footer-card {
+    max-width: 1550px;
+    margin: 0 auto;
+    padding: 75px 5% 55px;
+    background: #ffffff;
+    border-radius: 45px;
+    box-shadow: 0 18px 55px rgba(0,0,0,.055);
+  }
+
+  .bw-footer-main {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1.1fr 1fr;
+    gap: 45px;
+  }
+
+  /* BRAND */
+
+  .bw-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .bw-brand-icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 17px;
+    background: #000;
+    color: #fff;
+    font-size: 34px;
+    font-weight: 900;
+  }
+
+  .bw-brand-name {
+    font-size: 27px;
+    font-weight: 900;
+    color: #000;
+    letter-spacing: -1px;
+  }
+
+  .bw-tagline {
+    margin: 12px 0 28px;
+    font-size: 20px;
+    color: #737782;
+  }
+
+  /* SOCIAL ICONS */
+
+  .bw-socials {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
+
+  .bw-socials a {
+    display: inline-flex;
+    color: #000;
+    transition: transform .3s ease, opacity .3s ease;
+  }
+
+  .bw-socials a:hover {
+    transform: translateY(-5px);
+    opacity: .7;
+  }
+
+  .bw-socials svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* FOOTER COLUMNS */
+
+  .bw-footer-col h3 {
+    margin: 0 0 27px;
+    color: #000;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .bw-footer-col a {
+    display: block;
+    margin-bottom: 18px;
+    color: #747782;
+    font-size: 17px;
+    text-decoration: none;
+    transition: color .25s ease, transform .25s ease;
+  }
+
+  .bw-footer-col a:hover {
+    color: #000;
+    transform: translateX(4px);
+  }
+
+  /* COPYRIGHT */
+
+  .bw-footer-bottom {
+    margin-top: 45px;
+    padding-top: 42px;
+    border-top: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    color: #737782;
+    font-size: 16px;
+  }
+
+  .bw-footer-bottom a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bw-footer-bottom a:hover {
+    color: #000;
+  }
+
+  .bw-footer-legal {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  /* LARGE FADED BASICKWEAR */
+
+  .bw-footer-giant {
+    width: 100%;
+    max-width: 1550px;
+    margin: 45px auto 0;
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .bw-footer-giant span {
+    display: block;
+    width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(45px, 11vw, 190px);
+    font-weight: 900;
+    letter-spacing: -.065em;
+    line-height: .9;
+    white-space: nowrap;
+
+    background: linear-gradient(
+      to bottom,
+      #d0d0d0 0%,
+      #e2e2e2 50%,
+      #f5f5f5 100%
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* TABLET */
+
+  @media (max-width: 900px) {
+    .bw-footer-main {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .bw-footer-brand-col {
+      grid-column: 1 / -1;
+    }
+
+    .bw-footer-giant {
+      margin-top: 40px;
+    }
+  }
+
+  /* MOBILE */
+
+  @media (max-width: 600px) {
+    .bw-footer-section {
+      padding: 12px 12px 0;
+    }
+
+    .bw-footer-card {
+      padding: 35px 24px;
+      border-radius: 26px;
+    }
+
+    .bw-footer-main {
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 28px 16px;
+    }
+
+    .bw-footer-brand-col {
+      grid-column: 1 / -1;
+    }
+
+    .bw-brand-icon {
+      width: 48px;
+      height: 48px;
+      font-size: 27px;
+    }
+
+    .bw-brand-name {
+      font-size: 21px;
+    }
+
+    .bw-tagline {
+      font-size: 15px;
+    }
+
+    .bw-footer-col h3 {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .bw-footer-col a {
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .bw-footer-bottom {
+      flex-direction: column;
+      font-size: 13px;
+      margin-top: 30px;
+      padding-top: 25px;
+    }
+
+    .bw-footer-legal {
+      flex-wrap: wrap;
+    }
+
+    .bw-footer-giant {
+      margin-top: 30px;
+    }
+
+    .bw-footer-giant span {
+      font-size: 11vw;
+    }
+  }
+
+  /* SMOOTH ANIMATION */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bw-footer-card {
+      animation: bw-footer-reveal .8s ease both;
+    }
+
+    @keyframes bw-footer-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+</style>
+
+<footer class="bw-footer-section">
+
+  <div class="bw-footer-card">
+
+    <div class="bw-footer-main">
+
+      <!-- BRAND -->
+
+      <div class="bw-footer-brand-col">
+
+        <div class="bw-brand">
+
+          <div class="bw-brand-icon">
+            B
+          </div>
+
+          <span class="bw-brand-name">
+            BASICKWEAR
+          </span>
+
+        </div>
+
+        <p class="bw-tagline">
+          Everyday essentials, redefined.
+        </p>
+
+        <!-- SOCIAL ICONS -->
+
+        <div class="bw-socials">
+
+          <!-- INSTAGRAM -->
+
+          <a
+            href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/' }}"
+            aria-label="Instagram"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <rect
+                x="2"
+                y="2"
+                width="20"
+                height="20"
+                rx="5"
+              />
+
+              <circle
+                cx="12"
+                cy="12"
+                r="4"
+              />
+
+              <circle
+                cx="18"
+                cy="6"
+                r="1"
+                fill="currentColor"
+                stroke="none"
+              />
+
+            </svg>
+
+          </a>
+
+          <!-- YOUTUBE -->
+
+          <a
+            href="{{ settings.social_youtube_link | default: 'https://www.youtube.com/' }}"
+            aria-label="YouTube"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+
+              <rect
+                x="1"
+                y="4"
+                width="22"
+                height="16"
+                rx="5"
+              />
+
+              <path
+                d="M10 8 L16 12 L10 16 Z"
+                fill="white"
+              />
+
+            </svg>
+
+          </a>
+
+        </div>
+
+      </div>
+
+      <!-- PRODUCT -->
+
+      <div class="bw-footer-col">
+
+        <h3>Product</h3>
+
+        <a href="/collections/t-shirts">
+          T-Shirts
+        </a>
+
+        <a href="/collections/joggers">
+          Joggers
+        </a>
+
+        <a href="/collections/all">
+          All Products
+        </a>
+
+      </div>
+
+      <!-- RESOURCES -->
+
+      <div class="bw-footer-col">
+
+        <h3>Resources</h3>
+
+        <a href="/pages/track-your-order">
+          Track Your Order
+        </a>
+
+        <a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}">
+          Shipping Policy
+        </a>
+
+        <a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}">
+          Refund Policy
+        </a>
+
+        <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">
+          Privacy Policy
+        </a>
+
+      </div>
+
+      <!-- COMPANY -->
+
+      <div class="bw-footer-col">
+
+        <h3>Company</h3>
+
+        <a href="/pages/about-us">
+          About Us
+        </a>
+
+        <a href="/pages/contact">
+          Contact Us
+        </a>
+
+        <a href="/blogs/news">
+          Blogs
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- COPYRIGHT -->
+
+    <div class="bw-footer-bottom">
+
+      <span>
+        © {{ 'now' | date: '%Y' }}
+        BASICKWEAR. All rights reserved.
+      </span>
+
+      <div class="bw-footer-legal">
+
+        <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">
+          Privacy Policy
+        </a>
+
+        <span>|</span>
+
+        <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}">
+          Terms of Service
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- GIANT BASICKWEAR TEXT -->
+
+  <div class="bw-footer-giant" aria-hidden="true">
+    <span>BASICKWEAR</span>
+  </div>
+
+</footer>
+
+{% schema %}
+{
+  "name": "BASICKWEAR Footer",
+  "settings": [],
+  "presets": [
+    {
+      "name": "BASICKWEAR Footer"
+    }
+  ]
+}
+{% endschema %}

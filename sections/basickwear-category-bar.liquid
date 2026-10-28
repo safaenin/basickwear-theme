@@ -1,0 +1,336 @@
+{% comment %}
+  BASICKWEAR CATEGORY BAR
+  Homepage collection/category navigation
+{% endcomment %}
+
+<section
+  class="bw-category-section"
+  id="bw-category-section-{{ section.id }}"
+>
+  <div class="bw-category-inner">
+
+    {% if section.settings.heading != blank %}
+      <h2 class="bw-category-heading">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    <div class="bw-category-scroll">
+      <div class="bw-category-list">
+
+        {% for block in section.blocks %}
+          <a
+            href="{{ block.settings.link | default: '#' }}"
+            class="bw-category-pill"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.title }}
+          </a>
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+{% stylesheet %}
+
+/* =========================================================
+   BASICKWEAR CATEGORY BAR
+========================================================= */
+
+.bw-category-section {
+  width: 100%;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.bw-category-inner {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 18px 16px;
+  box-sizing: border-box;
+}
+
+
+/* HEADING */
+
+.bw-category-heading {
+  margin: 0 0 16px;
+  padding: 0;
+
+  color: #111111;
+
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+
+  text-align: center;
+}
+
+
+/* SCROLL AREA */
+
+.bw-category-scroll {
+  width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+
+.bw-category-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* CATEGORY LIST */
+
+.bw-category-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+
+/* CATEGORY BUTTON */
+
+.bw-category-pill {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  min-height: 44px;
+
+  padding: 9px 20px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 999px;
+
+  color: #111111;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* HOVER */
+
+.bw-category-pill:hover {
+  background: #111111;
+
+  border-color: #111111;
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media screen and (max-width: 989px) {
+
+  .bw-category-inner {
+    padding: 16px 12px;
+  }
+
+  .bw-category-list {
+    gap: 9px;
+  }
+
+  .bw-category-pill {
+    min-height: 41px;
+
+    padding: 8px 17px;
+
+    font-size: 14px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media screen and (max-width: 749px) {
+
+  .bw-category-inner {
+    padding: 12px 0;
+  }
+
+  .bw-category-heading {
+    margin-bottom: 12px;
+
+    padding: 0 14px;
+
+    font-size: 19px;
+
+    text-align: left;
+  }
+
+  .bw-category-scroll {
+    padding: 0 12px;
+
+    box-sizing: border-box;
+  }
+
+  .bw-category-list {
+    width: max-content;
+
+    flex-wrap: nowrap;
+
+    justify-content: flex-start;
+
+    gap: 8px;
+  }
+
+  .bw-category-pill {
+    min-height: 38px;
+
+    padding: 8px 15px;
+
+    font-size: 13px;
+
+    border-radius: 999px;
+  }
+
+}
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "BASICKWEAR category bar",
+  "tag": "section",
+  "class": "bw-category-bar-wrapper",
+
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Category"
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Category name",
+          "default": "T-Shirts"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Category link"
+        }
+      ]
+    }
+  ],
+
+  "max_blocks": 20,
+
+  "presets": [
+    {
+      "name": "BASICKWEAR category bar",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "title": "SHOP ALL"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "T-SHIRTS"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "JOGGERS"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "OVERSIZED"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "SHIRTS"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "HOODIES"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "CARGOS"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "title": "NEW ARRIVALS"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
