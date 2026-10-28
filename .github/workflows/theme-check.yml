@@ -1,0 +1,30 @@
+name: Theme checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+jobs:
+  theme-check:
+    name: Theme Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Shopify CLI
+        run: npm install -g @shopify/cli@latest
+
+      - name: Check theme
+        run: shopify theme check --fail-level error
