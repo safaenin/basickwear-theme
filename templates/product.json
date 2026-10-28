@@ -31,10 +31,6 @@
           },
           "blocks": {}
         },
-        "vol_countdown_timer_countdown_product_page_RteAMd": {
-          "type": "shopify://apps/vol-countdown-timer/blocks/countdown-product-page/019c9a25-ac89-7426-aadc-28e74cd8f97b",
-          "settings": {}
-        },
         "media-gallery": {
           "type": "_product-media-gallery",
           "static": true,
@@ -91,10 +87,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "vol_countdown_timer_countdown_product_page_rB8RcT": {
-              "type": "shopify://apps/vol-countdown-timer/blocks/countdown-product-page/019c9a25-ac89-7426-aadc-28e74cd8f97b",
-              "settings": {}
-            },
             "group_icgrde": {
               "type": "group",
               "name": "t:names.header",
@@ -329,7 +321,6 @@
             }
           },
           "block_order": [
-            "vol_countdown_timer_countdown_product_page_rB8RcT",
             "group_icgrde",
             "divider_VJhene",
             "custom_liquid_WFHArW",
@@ -341,8 +332,7 @@
         }
       },
       "block_order": [
-        "disclosures_g9mWze",
-        "vol_countdown_timer_countdown_product_page_RteAMd"
+        "disclosures_g9mWze"
       ],
       "settings": {
         "content_width": "content-center-aligned",

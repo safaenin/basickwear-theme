@@ -130,11 +130,6 @@
           "widget_type": "review-widget"
         }
       },
-      "9326385202548699218": {
-        "type": "shopify://apps/vol-countdown-timer/blocks/countdown-app-embed/019c9a25-ac89-7426-aadc-28e74cd8f97b",
-        "disabled": false,
-        "settings": {}
-      },
       "5460033060862993441": {
         "type": "shopify://apps/essential-announcer/blocks/app-embed/93b5429f-c8d6-4c33-ae14-250fd84f361b",
         "disabled": false,

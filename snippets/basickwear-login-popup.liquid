@@ -25,51 +25,14 @@
 
   .bw-popup-box {
     width: 100%;
-    max-width: 1000px;
+    max-width: 460px;
     max-height: 90dvh;
     background: #fff;
     border-radius: 18px;
-    display: grid;
-    grid-template-columns: 55% 45%;
+    display: block;
     overflow: hidden;
     position: relative;
     box-shadow: 0 25px 80px rgba(0,0,0,.3);
-  }
-
-  .bw-popup-image {
-    position: relative;
-    min-height: 530px;
-    background: #292929;
-  }
-
-  .bw-popup-image img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-    object-fit: cover;
-  }
-
-  .bw-popup-image::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      transparent 45%,
-      rgba(0,0,0,.65)
-    );
-  }
-
-  .bw-popup-brand {
-    position: absolute;
-    bottom: 30px;
-    left: 25px;
-    z-index: 1;
-    color: #fff;
-    font-size: 42px;
-    font-weight: 900;
-    letter-spacing: -2px;
-    line-height: 1;
   }
 
   .bw-popup-content {
@@ -211,19 +174,8 @@
       border-radius: 14px;
     }
 
-    .bw-popup-image {
-      height: 180px;
-      min-height: 180px;
-    }
-
-    .bw-popup-brand {
-      font-size: 29px;
-      left: 18px;
-      bottom: 17px;
-    }
-
     .bw-popup-content {
-      padding: 26px 20px;
+      padding: 56px 20px 26px;
     }
 
     .bw-popup-title {
@@ -267,24 +219,6 @@
     >
       &times;
     </button>
-
-    <div class="bw-popup-image">
-  
-<img
- 
-src="{{ 'BASICKWEAR Urban Lookbook.png' | asset_url }}"
-
-  alt="BASICKWEAR Collection"
-  width="900"
-  height="1100"
-  loading="lazy"
->
-
-
-      <div class="bw-popup-brand">
-        BASICKWEAR.
-      </div>
-    </div>
 
     <div class="bw-popup-content">
 
