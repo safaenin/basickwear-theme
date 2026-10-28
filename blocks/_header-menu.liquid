@@ -241,12 +241,7 @@
     min-height: var(--header-drawer-min-height);
   }
 
-  @media screen and (min-width: 750px) {
-    #header-component[data-menu-style='menu'] .header__drawer {
-      display: none;
-      min-height: 0;
-    }
-  }
+  /* The header uses drawer navigation on desktop as well as mobile. */
 
   .header--compact .header__drawer {
     min-height: var(--minimum-touch-target);
