@@ -1491,7 +1491,7 @@
   }
 {% endstylesheet %}
 <style>
-/* BASICKWEAR - Black 3 Line Menu */
+/* BASICKWEAR - 3 Line Menu */
 .header__icon--menu {
   background: transparent !important;
   border: none !important;
@@ -1504,18 +1504,18 @@
   justify-content: center !important;
 }
 
-/* Black hamburger lines */
+/* Follow the header color in both transparent and solid states. */
 .header__icon--menu .header-drawer-icon--open {
   width: 22px !important;
   height: 20px !important;
   display: block !important;
   background: linear-gradient(
     to bottom,
-    #000 0 2px,
+    currentColor 0 2px,
     transparent 2px 9px,
-    #000 9px 11px,
+    currentColor 9px 11px,
     transparent 11px 18px,
-    #000 18px 20px
+    currentColor 18px 20px
   ) center / 22px 20px no-repeat !important;
 }
 
@@ -1524,9 +1524,9 @@
   display: none !important;
 }
 
-/* Black close icon */
+/* Close icon */
 .header__icon--menu .header-drawer-icon--close svg {
-  color: #000 !important;
-  stroke: #000 !important;
+  color: currentColor !important;
+  stroke: currentColor !important;
 }
 </style>
