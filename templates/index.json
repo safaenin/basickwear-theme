@@ -17,7 +17,7 @@
           "name": "t:names.slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/643c0893-fca8-40c8-883d-33bda27cb62e.png",
+            "image_1": "shopify://shop_images/compress.png",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
