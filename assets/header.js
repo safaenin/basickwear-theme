@@ -10,7 +10,7 @@ import {
 /**
  * @typedef {Object} HeaderComponentRefs
  * @property {HTMLDivElement} headerDrawerContainer - The header drawer container element
- * @property {HTMLElement} headerMenu - The header menu element
+ * @property {HTMLElement} [headerMenu] - The optional desktop header menu element
  * @property {HTMLElement} headerRowTop - The header top row element
  */
 
@@ -25,7 +25,8 @@ import {
  */
 
 class HeaderComponent extends Component {
-  requiredRefs = ['headerDrawerContainer', 'headerMenu', 'headerRowTop'];
+  // Drawer-only layouts do not render a desktop headerMenu ref.
+  requiredRefs = ['headerDrawerContainer', 'headerRowTop'];
 
   /**
    * Width of window when header drawer was hidden
