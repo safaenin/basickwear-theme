@@ -83,8 +83,7 @@
         }
       },
       "custom_css": [
-        ".header,.header__row,.header-section {background-color: #fff !important;}",
-        ".header a,.header button,.header svg {color: #000 !important;}",
+        ".header:not([transparent]) .header__row {background-color: #fff !important;}",
         "@media screen and (min-width: 750px) {.header-menu a, .header-menu summary {font-family: \"Oswald\", sans-serif !important; font-size: 16px !important; font-weight: 500 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; }}"
       ],
       "settings": {
@@ -115,15 +114,15 @@
         "actions_font": "body",
         "actions_text_case": "none",
         "background_color_top": "{{ settings.color_palette.foreground }}",
-        "text_color_top": "",
+        "text_color_top": "#000000",
         "background_color_bottom": "",
         "text_color_bottom": "",
         "bubble_style": "custom",
         "bubble_background_color": "{{ settings.color_palette.color2 }}",
         "bubble_text_color": "",
-        "enable_transparent_header_home": false,
-        "home_inverse_logo": false,
-        "text_color_transparent_home": "",
+        "enable_transparent_header_home": true,
+        "home_inverse_logo": true,
+        "text_color_transparent_home": "#ffffff",
         "enable_transparent_header_product": false,
         "product_inverse_logo": false,
         "text_color_transparent_product": "",

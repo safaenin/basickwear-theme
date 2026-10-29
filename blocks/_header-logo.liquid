@@ -13,10 +13,12 @@
   endif
 
   if use_inverse_logo
+    assign inverse_logo_class = 'header-logo__image'
     if settings.logo_inverse != blank
       assign inverse_logo = settings.logo_inverse
     else
       assign inverse_logo = settings.logo
+      assign inverse_logo_class = inverse_logo_class | append: ' header-logo__image--white-fallback'
     endif
   endif
 
@@ -74,7 +76,7 @@
     >
       {% render 'image',
         image: inverse_logo,
-        class: 'header-logo__image',
+        class: inverse_logo_class,
         height: settings.logo_height,
         alt_text_fallback: alt_text_fallback,
         text_fallback: shop.name,
@@ -135,6 +137,10 @@
 
   .header-logo__solid-header-image-container {
     display: var(--header-logo-display, block);
+  }
+
+  .header-logo__image--white-fallback {
+    filter: brightness(0) invert(1);
   }
 
   .header-logo__transparent-header-image-container {
