@@ -1,0 +1,223 @@
+/* Approved homepage banner: continuous photo behind the transparent header.
+   Keep these rules scoped to the first homepage slideshow. */
+.bw-homepage #MainContent > .shopify-section:first-child:has(.bw-homepage-banner) {
+  /* The header already floats above the banner; retain the announcement's space. */
+  margin-top: 0 !important;
+}
+
+.bw-homepage-banner {
+  --bw-banner-height: clamp(480px, 56.25vw, 900px);
+}
+
+.bw-homepage-banner slideshow-slides,
+.bw-homepage-banner slideshow-slide {
+  height: var(--bw-banner-height);
+  min-height: var(--bw-banner-height);
+}
+
+.bw-homepage-banner slideshow-slide > .slide__image-container {
+  inset: 0;
+}
+
+.bw-homepage-banner .slide__image-container .slide__image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.bw-homepage-banner .slide__content {
+  width: 100%;
+  padding: 100px 24px 65px;
+}
+
+.bw-homepage-banner .slide__content > .group-block-content {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 13px;
+  text-align: center;
+}
+
+.bw-homepage-banner .text-block {
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  color: #fff;
+}
+
+.bw-homepage-banner .text-block.h2 :is(h2, h4, p) {
+  margin: 0;
+  font-family: var(--font-heading--family);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.bw-homepage-banner .text-block:not(.h2) :is(h5, h6, p) {
+  margin: 0;
+  font-family: var(--font-heading--family);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.4px;
+}
+
+.bw-homepage-banner slideshow-controls[controls-on-media] {
+  bottom: 11px;
+  mix-blend-mode: normal;
+  --color-foreground: #fff;
+  --color-foreground-rgb: 255 255 255;
+}
+
+.bw-homepage-banner .slideshow-controls__dots {
+  gap: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.bw-homepage-banner .slideshow-controls__dots button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  animation: none;
+}
+
+.bw-homepage-banner .slideshow-controls__dots button::after {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgb(255 255 255 / 55%);
+  box-shadow: none;
+}
+
+.bw-homepage-banner .slideshow-controls__dots button[aria-selected='true']::after {
+  background-color: #fff;
+  box-shadow: none;
+}
+
+.bw-homepage-banner .slideshow-controls__dots button[aria-selected='true']::before {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: conic-gradient(#fff var(--slideshow-progress, 0deg), rgb(255 255 255 / 20%) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px));
+}
+
+/* The homepage uses only the three navigation dots. */
+.bw-homepage-banner slideshow-controls > :is(.icon-pause, .icon-play) {
+  display: none !important;
+}
+
+/* There is no call-to-action button in the approved homepage slides. */
+.bw-homepage-banner .slide__content :is(.button, .button-secondary) {
+  display: none;
+}
+
+@media screen and (min-width: 750px) {
+  .bw-homepage-banner {
+    /* Header floats over the photo; only the announcement consumes viewport space. */
+    --bw-banner-height: calc(100svh - var(--header-group-height, 32px));
+  }
+
+  .bw-homepage-banner .slide__image-container .slide__image {
+    /* Move the visible photo slightly upward when the wide image is cropped. */
+    object-position: center 60% !important;
+  }
+
+  .bw-homepage-banner .slide__content {
+    padding-bottom: 100px;
+    /* Keep captions visible when resizing resets the scroll-linked reveal timeline. */
+    opacity: 1;
+    animation: none;
+  }
+
+  .bw-homepage-banner slideshow-controls[controls-on-media] {
+    bottom: 14px;
+  }
+
+  .bw-homepage-banner .slideshow-controls__dots button {
+    width: 36px;
+  }
+
+  .bw-homepage #header-component .header__row--top .header__columns {
+    grid-template-columns: minmax(44px, 1fr) auto minmax(260px, 1fr) !important;
+  }
+
+  .bw-homepage #header-component .header-logo__image {
+    width: clamp(240px, 28vw, 420px);
+    height: auto;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .bw-homepage-banner {
+    /* Fit below the announcement and avoid horizontal cropping of the 3:5 portrait. */
+    --bw-banner-height: min(calc(100svh - var(--header-group-height, 32px)), 166.667vw);
+  }
+
+  .bw-homepage-banner .slide__content {
+    padding: 140px 16px 105px;
+  }
+
+  .bw-homepage-banner [data-mobile-banner='beyond'] .slide__image,
+  .bw-homepage-banner [data-mobile-banner='street'] .slide__image {
+    object-position: center bottom !important;
+    height: calc(100% + 35px) !important;
+    transform: translateY(-35px);
+  }
+
+  .bw-homepage-banner .text-block.h2 {
+    max-width: 290px !important;
+  }
+
+  .bw-homepage-banner .text-block.h2 :is(h2, h4, p) {
+    font-size: clamp(32px, 9.2vw, 38px);
+  }
+
+  .bw-homepage #header-component .header__row--top .header__columns {
+    grid-template-columns: 44px minmax(0, 1fr) 44px !important;
+    min-height: 72px;
+  }
+
+  .bw-homepage #header-component .header__row--top header-actions {
+    width: 44px !important;
+  }
+
+  .bw-homepage #header-component .account-button {
+    display: none !important;
+  }
+
+  .bw-homepage #header-component .header-logo {
+    width: min(240px, 100%);
+  }
+
+  .bw-homepage #header-component .header-logo__image {
+    width: 100%;
+    height: auto;
+    max-height: 26px;
+  }
+
+  .bw-homepage #header-component .header-logo > span {
+    width: 100%;
+  }
+
+  .bw-homepage #bw-clean-mobile-search {
+    padding: 8px 20px 0 !important;
+  }
+
+  .bw-homepage #bw-clean-mobile-search .bw-search-popup-trigger {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding-inline: 17px !important;
+    font-size: 14px !important;
+  }
+}
