@@ -20,7 +20,10 @@
         "footer p {font-family: \"Oswald\", sans-serif !important;}"
       ],
       "name": "t:names.footer",
-      "settings": {}
+      "settings": {
+        "instagram_url": "https://www.instagram.com/basickwear.store/",
+        "youtube_url": "https://www.youtube.com/channel/UCn-C-oPanhJMjTWfBqWKFIg"
+      }
     },
     "footer_utilities_jLGE8U": {
       "type": "footer-utilities",
@@ -49,8 +52,8 @@
           "settings": {
             "icon_color": "",
             "facebook_url": "https://www.facebook.com/",
-            "instagram_url": "https://www.instagram.com/",
-            "youtube_url": "https://www.youtube.com/",
+            "instagram_url": "https://www.instagram.com/basickwear.store/",
+            "youtube_url": "https://www.youtube.com/channel/UCn-C-oPanhJMjTWfBqWKFIg",
             "tiktok_url": "https://www.tiktok.com/",
             "twitter_url": "https://x.com/",
             "threads_url": "",
