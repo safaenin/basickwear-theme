@@ -68,11 +68,30 @@
       -%}
 
       {%- if block_settings.media_type_1 == 'image' -%}
+        {%- liquid
+          assign mobile_banner_key = ''
+          if block_settings.image_mobile.src contains 'basickwear-beyond-mobile'
+            assign mobile_banner_key = 'beyond'
+          elsif block_settings.image_mobile.src contains 'basickwear-street-mobile'
+            assign mobile_banner_key = 'street'
+          endif
+        -%}
+        <picture class="slide__picture" data-mobile-banner="{{ mobile_banner_key }}">
+          {%- if block_settings.image_mobile != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="{{ block_settings.image_mobile | image_url: width: 450 }} 450w, {{ block_settings.image_mobile | image_url: width: 750 }} 750w, {{ block_settings.image_mobile | image_url: width: 1080 }} 1080w"
+              sizes="100vw"
+              width="{{ block_settings.image_mobile.width }}"
+              height="{{ block_settings.image_mobile.height }}"
+            >
+          {%- endif -%}
         {{
           block_settings.image_1
           | image_url: width: 3840
           | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
         }}
+        </picture>
       {%- else -%}
         {%- if block_settings.video_1.preview_image -%}
 
@@ -162,6 +181,13 @@
     position: absolute;
   }
 
+  .slide__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slide__picture > .slide__image,
   .slide__image-container > .slide__image,
   .slide__image-container > .slide__video,
   .slide__image-container > .slide__video-poster {
@@ -245,6 +271,13 @@
       "type": "image_picker",
       "id": "image_1",
       "label": "t:settings.image",
+      "visible_if": "{{ block.settings.media_type_1 == 'image' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "Optional portrait image for screens below 750px. Desktop keeps its original image.",
       "visible_if": "{{ block.settings.media_type_1 == 'image' }}"
     },
     {

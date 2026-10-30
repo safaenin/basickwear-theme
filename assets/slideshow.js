@@ -143,6 +143,7 @@ export class Slideshow extends Component {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.suspend();
 
     // Unregister from shared viewport observer
     SlideshowViewportObserver.getInstance().unobserve(this);
@@ -150,6 +151,9 @@ export class Slideshow extends Component {
     if (this.#scroll) {
       const { scroller } = this.refs;
       scroller.removeEventListener('mousedown', this.#handleMouseDown);
+      this.removeEventListener('touchstart', this.suspend);
+      this.removeEventListener('touchend', this.resume);
+      this.removeEventListener('touchcancel', this.resume);
       this.#scroll.destroy();
     }
 
@@ -189,6 +193,7 @@ export class Slideshow extends Component {
    */
   async select(input, event, options = {}) {
     if (this.#disabled || !this.refs.slides?.length) return;
+    if (event && this.#progressDuration > 0) this.#resetPlaybackProgress();
     if (!this.#scroll) return;
 
     // Store the actual current slide before any mutations
@@ -339,12 +344,21 @@ export class Slideshow extends Component {
 
   /**
    * Starts automatic slide playback.
-   * @param {number} [interval] - The time interval in seconds between slides.
+   * @param {number} [interval] - The time interval in milliseconds between slides.
    */
   play(interval = this.autoplayInterval) {
-    if (this.#interval) return;
+    if (this.#interval || this.#progressFrame !== undefined) return;
 
     this.paused = false;
+
+    // The homepage ring and automatic advance share one clock, so a full lap
+    // always advances the slide instead of drifting against a separate animation.
+    if (this.closest('.bw-homepage-banner') && interval > 0) {
+      this.#progressDuration = interval;
+      this.#resetPlaybackProgress();
+      this.#progressFrame = requestAnimationFrame(this.#advancePlaybackProgress);
+      return;
+    }
 
     this.#interval = setInterval(() => {
       if (this.matches(':hover') || document.hidden) return;
@@ -379,6 +393,10 @@ export class Slideshow extends Component {
   suspend() {
     clearInterval(this.#interval);
     this.#interval = undefined;
+    if (this.#progressFrame !== undefined) {
+      cancelAnimationFrame(this.#progressFrame);
+      this.#progressFrame = undefined;
+    }
   }
 
   /**
@@ -420,7 +438,6 @@ export class Slideshow extends Component {
    */
   set current(value) {
     const { current, thumbnails, dots, slides, previous, next } = this.refs;
-
     this.#current = value;
 
     if (current) current.textContent = `${value + 1}`;
@@ -496,6 +513,32 @@ export class Slideshow extends Component {
    */
   #interval = undefined;
 
+  /** @type {number | undefined} */
+  #progressFrame = undefined;
+  #progressStartedAt = 0;
+  #progressDuration = 0;
+
+  #resetPlaybackProgress() {
+    this.#progressStartedAt = performance.now();
+    this.style.setProperty('--slideshow-progress', '0deg');
+  }
+
+  /** @param {number} timestamp */
+  #advancePlaybackProgress = (timestamp) => {
+    this.#progressFrame = undefined;
+    if (!this.isConnected || this.paused || document.hidden) return;
+
+    const progress = Math.min(1, (timestamp - this.#progressStartedAt) / this.#progressDuration);
+    this.style.setProperty('--slideshow-progress', `${(progress * 360).toFixed(2)}deg`);
+
+    if (progress >= 1) {
+      this.#resetPlaybackProgress();
+      this.next();
+    }
+
+    this.#progressFrame = requestAnimationFrame(this.#advancePlaybackProgress);
+  };
+
   /**
    * The Scroller instance that manages scrolling.
    * @type {Scroller}
@@ -554,8 +597,16 @@ export class Slideshow extends Component {
 
     scroller.addEventListener('mousedown', this.#handleMouseDown);
 
-    this.addEventListener('mouseenter', this.suspend);
-    this.addEventListener('mouseleave', this.resume);
+    // Homepage progress keeps moving under the pointer, like its reference.
+    // Other galleries retain their existing hover-to-pause behavior.
+    if (!this.closest('.bw-homepage-banner')) {
+      this.addEventListener('mouseenter', this.suspend);
+      this.addEventListener('mouseleave', this.resume);
+    } else {
+      this.addEventListener('touchstart', this.suspend, { passive: true });
+      this.addEventListener('touchend', this.resume, { passive: true });
+      this.addEventListener('touchcancel', this.resume, { passive: true });
+    }
     this.addEventListener('pointerenter', this.#handlePointerEnter);
     document.addEventListener('visibilitychange', this.#handleVisibilityChange);
 
@@ -731,7 +782,10 @@ export class Slideshow extends Component {
         // Prevent clicks once the user starts dragging
         document.addEventListener('click', preventDefault, { once: true, signal: clickController.signal });
 
-        this.pause();
+        // A homepage swipe temporarily suspends the clock, not a permanent
+        // user pause; the existing pointer-up resume starts a fresh lap.
+        if (this.closest('.bw-homepage-banner')) this.suspend();
+        else this.pause();
         this.setAttribute('dragging', '');
         this.#scroll.snap = false;
       }
